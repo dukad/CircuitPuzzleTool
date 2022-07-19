@@ -1,23 +1,11 @@
 <!DOCTYPE html>
+<script src="path/to/pixijs-grid.js"></script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hi There</title>
-    <script src="js/pixi.min.js"></script>
-    <script>
-        let app;
+    <title>hi</title>
+    <script src="js/pixi.min.js">
 
-        window.onload = function() {
-            app = new PIXI.Application(
-                {
-                    width: 800,
-                    height: 600,
-                    backgroundColor: 0xAAAAAA
-                }
-            );
-
-            document.body.appendChild(app.view)
-        }
     </script>
 
     <style>
@@ -59,13 +47,61 @@
     </style>
 </head>
 <body>
+<!--    <script>-->
+<!--        let app;-->
+
+<!--        window.onload = function() {-->
+<!--            app = new PIXI.Application(-->
+<!--                {-->
+<!--                    width: window.outerWidth,-->
+<!--                    height: window.outerHeight,-->
+<!--                    backgroundColor: 0x11111,-->
+<!--                    resolution: window.devicePixelRatio || 1,-->
+<!--                }-->
+<!--            );-->
+
+<!--            document.body.appendChild(app.view)-->
+<!--        }-->
+
+<!--    </script>-->
+</body>
+
+<body>
+    <script>
+        // import { Cell } from 'cell.js';
+
+        // create a new pixi application, all things inside the application must fit within this window
+        const app = new PIXI.Application(
+            {
+                width: window.outerWidth,
+                height: window.outerHeight,
+                backgroundColor: 0x11111,
+                resolution: window.devicePixelRatio || 1,
+            }
+        )
+
+
+        // tell the html document to display the pixi application
+        document.body.appendChild(app.view)
+
+
+        let graphic = new PIXI.Graphics();
+        app.stage.addChild(graphic);
+
+            for (let i = 0; i < 14; i++) {
+                graphic.beginFill(0x650A5A);
+                graphic.drawRect(i * 50 + 5, 5, 45, 45);
+                graphic.endFill();
+
+            }
+    </script>
+
     <div class='bar'></div>
     <div class='bar'></div>
     <div class='bar'></div>
     <div id="menu" class="menu" ></div>
     <button class="menuHitBox" onclick="myFunction()"></button>
     <script>
-        //function checks what class is activated and then changes the class to either bring menu in or pull it out
     function myFunction(){
         let btn = document.getElementById('menu')
         if(btn.classList.contains('menuReturn')){
@@ -76,8 +112,27 @@
             btn.classList.remove('menuPullOut')
         }
     }
-
-
     </script>
+
+
+
+
+
+        // const graphics = new PIXI.Graphics()
+        // const testcell = new Cell(0, 0, 100)
+        //
+        // testcell.draw(0xffd900, app)
+
+
+        // // Pixi drawing yay
+        // const graphics = new PIXI.Graphics();
+        // graphics.beginFill(0xffd900);
+        // graphics.drawRect(0, 0, 100, 100);
+        // graphics.endFill();
+        //
+        // app.stage.addChild(graphics)
+
+
+
 </body>
 </html>
