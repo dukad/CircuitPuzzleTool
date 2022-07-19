@@ -7,44 +7,6 @@
     <script src="js/pixi.min.js">
 
     </script>
-
-    <style>
-        .bar {
-            width: 35px;
-            height: 5px;
-            background-color: Black;
-            margin: 6px 0;
-            position:relative;
-            left: 1400px;
-            top:2px
-        }
-        .menuHitBox {
-            width: 35px;
-            height: 27px;
-            background-color: gray;
-            opacity: 0;
-            margin: 6px 0;
-            position:fixed;
-            left: 1408px;
-            top:4px
-        }
-
-        .menu {
-            background-color: #c4b9b1;
-            width: 250px;
-            height: 1000px;
-            position: relative;
-            left: 1442px;
-            top: 2px;
-            transition: transform .2s ease-in-out;
-        }
-        .menuPullOut {
-            transform: translatex(-250px);
-         }
-        .menuReturn{
-            transform: translateX(250px);
-        }
-    </style>
 </head>
 <body>
 <!--    <script>-->
@@ -94,25 +56,10 @@
                 graphic.endFill();
 
             }
-    </script>
 
-    <div class='bar'></div>
-    <div class='bar'></div>
-    <div class='bar'></div>
-    <div id="menu" class="menu" ></div>
-    <button class="menuHitBox" onclick="myFunction()"></button>
-    <script>
-    function myFunction(){
-        let btn = document.getElementById('menu')
-        if(btn.classList.contains('menuReturn')){
-            btn.classList.add('menuPullOut')
-            btn.classList.remove('menuReturn')
-        } else {
-            btn.classList.add('menuReturn')
-            btn.classList.remove('menuPullOut')
-        }
-    }
-    </script>
+
+
+
 
 
 
@@ -132,7 +79,7 @@
         //
         // app.stage.addChild(graphics)
 
-
-
+    </script>
 </body>
+
 </html>
