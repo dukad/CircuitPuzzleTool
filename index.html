@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="path/to/pixijs-grid.js"></script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,10 +46,29 @@
         // tell the html document to display the pixi application
         document.body.appendChild(app.view)
 
-        const graphics = new PIXI.Graphics()
-        const testcell = new Cell(0, 0, 100)
 
-        testcell.draw(0xffd900, app)
+        let graphic = new PIXI.Graphics();
+        app.stage.addChild(graphic);
+
+            for (let i = 0; i < 14; i++) {
+                graphic.beginFill(0x650A5A);
+                graphic.drawRect(i * 50 + 5, 5, 45, 45);
+                graphic.endFill();
+
+            }
+
+
+
+
+
+
+
+
+
+        // const graphics = new PIXI.Graphics()
+        // const testcell = new Cell(0, 0, 100)
+        //
+        // testcell.draw(0xffd900, app)
 
 
         // // Pixi drawing yay
