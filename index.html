@@ -25,14 +25,16 @@
 
         // Cell class meant to be in cell.js after import problems fixed
         class Cell {
-            constructor(x_coordinate, y_coordinate, dimension) {
+            constructor(x_coordinate, y_coordinate, dimension, rect) {
                 this.x = x_coordinate;
                 this.y = y_coordinate;
                 this.dimension = dimension;
+                this.rect = rect;
+
             }
 
             draw(color, app, graphics) {
-                graphic.lineStyle(2, 0x646464, 1)
+                graphics.lineStyle(2, 0x646464, 1)
                 graphics.beginFill(color)
                 graphics.drawRect(this.x, this.y, this.dimension, this.dimension)
                 graphics.endFill()
@@ -48,15 +50,20 @@
         const cell_dimension = 45
         const grid_height = window.innerHeight / cell_dimension
         const grid_width = window.innerWidth / cell_dimension
+        let cell = [];
 
-            //create a matrix of cells
+        //create a matrix of cells
             for (let i = 0; i < grid_height; i++) {
                 for (let j = 0; j < grid_width; j++)
                 {
-                    let cell = new Cell(i * 45, j * 45, cell_dimension)
+                    let rect;
+                    rect = new PIXI.Rectangle(i * 45, j * 45, cell_dimension, cell_dimension);
+                    cell[i][j] = new Cell(i * 45, j * 45, cell_dimension, rect)
                     cell.draw(0x000000, app, graphic)
                 }
             }
+
+
 
     </script>
 </body>
