@@ -5,10 +5,139 @@
     <meta charset="UTF-8">
     <title>hi</title>
     <script src="js/pixi.min.js">
-
     </script>
+  <!-- <style>
+        .bar {
+            width: 28px;
+            height: 5px;
+            background-color: Black;
+            margin: 5px 0;
+            position:relative;
+            left: 1400px;
+            top:2px;
+            transition: transform .5s ease-in-out, opacity 200ms;
+        }
+        .menuHitBox {
+            width: 35px;
+            height: 27px;
+            background-color: gray;
+            opacity: 0;
+            margin: 6px 0;
+            position:fixed;
+            left: 1408px;
+            top:4px
+        }
+
+        .menu {
+            background-color: #c4b9b1;
+            width: 250px;
+            height: 1000px;
+            position: relative;
+            left: 1442px;
+            top: 2px;
+            transition: transform .5s ease-in-out;
+        }
+        .menuPullOut {
+            transform: translatex(-250px);
+        }
+        .menuReturn{
+            transform: translateX(250px);
+        }
+        .bar1{
+            transform: translateY(10px) rotate(-45deg);
+        }
+        .bar2{
+            opacity: 0;
+        }
+        .bar3{
+            transform: translateY(-10px) rotate(45deg);
+        }
+
+    </style>-->
 </head>
 <body>
+<!--<div class='bar' id="bar1"></div>
+<div class='bar' id="bar2"></div>
+<div class='bar' id="bar3"></div>
+<div id="menu" class="menu" ></div>-->
+<script type="module">
+    //import {Cell} from './cell.js';
+
+    // Cell class meant to be in cell.js after import problems fixed
+    class Cell {
+        constructor(x_coordinate, y_coordinate, dimension) {
+            this.x = x_coordinate;
+            this.y = y_coordinate;
+            this.dimension = dimension;
+        }
+
+        draw(color, app, graphics) {
+            graphic.lineStyle(2, 0x646464, 1)
+            graphics.beginFill(color)
+            graphics.drawRect(this.x, this.y, this.dimension, this.dimension)
+            graphics.endFill()
+            app.stage.addChild(graphics)
+        }
+    }
+    // create a new pixi application, all things inside the application must fit within this window
+    const app = new PIXI.Application(
+        {
+            width: window.outerWidth,
+            height: window.outerHeight,
+            backgroundColor: 0x11111,
+            resolution: window.devicePixelRatio || 1,
+        }
+    )
+
+    // tell the html document to display the pixi application
+    document.body.appendChild(app.view)
+
+
+
+    // create container for all cells
+    let graphic = new PIXI.Graphics();
+    app.stage.addChild(graphic);
+
+    // constants
+    const cell_dimension = 45
+    const grid_height = window.innerHeight / cell_dimension
+    const grid_width = window.innerWidth / cell_dimension
+
+    //create a matrix of cells
+    for (let i = 0; i < grid_height; i++) {
+        for (let j = 0; j < grid_width; j++)
+        {
+            let cell = new Cell(i * 45, j * 45, cell_dimension)
+            cell.draw(0x000000, app, graphic)
+        }
+    }
+
+</script>
+
+<!--<button class="menuHitBox" onclick="myFunction()"></button>
+<script>
+    function myFunction(){
+        let btn = document.getElementById('menu')
+        let bar1 = document.getElementById('bar1')
+        let bar2 = document.getElementById('bar2')
+        let bar3 = document.getElementById('bar3')
+        if(btn.classList.contains('menuReturn')){
+            btn.classList.add('menuPullOut')
+            btn.classList.remove('menuReturn')
+            bar1.classList.add('bar1')
+            bar2.classList.add('bar2')
+            bar3.classList.add('bar3')
+        } else {
+            btn.classList.add('menuReturn')
+            btn.classList.remove('menuPullOut')
+            bar1.classList.remove('bar1')
+            bar3.classList.remove('bar3')
+            setTimeout(()=>{bar2.classList.remove('bar2')},320)
+
+
+        }
+    }
+</script>-->
 <!--    <script>-->
 <!--        let app;-->
 
@@ -26,60 +155,6 @@
 <!--        }-->
 
 <!--    </script>-->
-</body>
-
-<body>
-    <script>
-        // import { Cell } from 'cell.js';
-
-        // create a new pixi application, all things inside the application must fit within this window
-        const app = new PIXI.Application(
-            {
-                width: window.outerWidth,
-                height: window.outerHeight,
-                backgroundColor: 0x11111,
-                resolution: window.devicePixelRatio || 1,
-            }
-        )
-
-
-        // tell the html document to display the pixi application
-        document.body.appendChild(app.view)
-
-
-        let graphic = new PIXI.Graphics();
-        app.stage.addChild(graphic);
-
-            for (let i = 0; i < 14; i++) {
-                graphic.beginFill(0x650A5A);
-                graphic.drawRect(i * 50 + 5, 5, 45, 45);
-                graphic.endFill();
-
-            }
-
-
-
-
-
-
-
-
-
-        // const graphics = new PIXI.Graphics()
-        // const testcell = new Cell(0, 0, 100)
-        //
-        // testcell.draw(0xffd900, app)
-
-
-        // // Pixi drawing yay
-        // const graphics = new PIXI.Graphics();
-        // graphics.beginFill(0xffd900);
-        // graphics.drawRect(0, 0, 100, 100);
-        // graphics.endFill();
-        //
-        // app.stage.addChild(graphics)
-
-    </script>
 </body>
 
 </html>

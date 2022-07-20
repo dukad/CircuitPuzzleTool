@@ -1,4 +1,4 @@
-class Cell {
+export class Cell {
     constructor(x_coordinate, y_coordinate, dimension) {
         this.x = x_coordinate;
         this.y = y_coordinate;
