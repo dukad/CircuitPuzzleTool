@@ -1,4 +1,4 @@
-// import { Cell } from 'cell.js';
+import Cell from './src/cell.js';
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {
@@ -13,23 +13,23 @@ const app = new PIXI.Application(
 document.body.appendChild(app.view)
 
 // Cell class meant to be in cell.js after import problems fixed
-class Cell {
-    constructor(x_coordinate, y_coordinate, dimension, rect) {
-        this.x = x_coordinate;
-        this.y = y_coordinate;
-        this.dimension = dimension;
-        this.rect = rect;
-
-    }
-
-    draw(color, app, graphics) {
-        graphics.lineStyle(2, 0x646464, 1)
-        graphics.beginFill(color)
-        graphics.drawRect(this.x, this.y, this.dimension, this.dimension)
-        graphics.endFill()
-        app.stage.addChild(graphics)
-    }
-}
+// class Cell {
+//     constructor(x_coordinate, y_coordinate, dimension, rect) {
+//         this.x = x_coordinate;
+//         this.y = y_coordinate;
+//         this.dimension = dimension;
+//         this.rect = rect;
+//
+//     }
+//
+//     draw(color, app, graphics) {
+//         graphics.lineStyle(2, 0x646464, 1)
+//         graphics.beginFill(color)
+//         graphics.drawRect(this.x, this.y, this.dimension, this.dimension)
+//         graphics.endFill()
+//         app.stage.addChild(graphics)
+//     }
+// }
 
 // create container for all cells
 let graphic = new PIXI.Graphics();

@@ -6,21 +6,10 @@ export default class Cell {
     }
 
     draw(color, app, graphics) {
-        graphic.lineStyle(2, 0x646464, 1)
+        graphics.lineStyle(2, 0x646464, 1)
         graphics.beginFill(color)
         graphics.drawRect(this.x, this.y, this.dimension, this.dimension)
         graphics.endFill()
         app.stage.addChild(graphics)
-    }
-}
-
-export class Test {
-    constructor(value, value2) {
-        this.x = value;
-        this.y = value2;
-    }
-
-    testing() {
-        return (this.x * this.y)
     }
 }
