@@ -5,7 +5,6 @@ export default class Cell {
         this.dimension = dimension;
         this.rect = rect;
         this.color = color;
-
     }
 
     draw(app, graphics) {
@@ -16,8 +15,14 @@ export default class Cell {
         app.stage.addChild(graphics)
     }
 
-    onClick(app, graphics) {
-        this.color = 0x04b504
-        return this.draw(app, graphics)
+    onClick(app, graphics2) {
+        {
+            graphics2.lineStyle(2, 0x1f1f1f, 1);
+            graphics2.beginFill(0x04b504);
+            graphics2.drawCircle(cell_dimension/2, cell_dimension/2, cell_dimension / 3);
+            graphics2.endFill();
+            app.stage.addChild(graphics2);
+        }
     }
+
 }
