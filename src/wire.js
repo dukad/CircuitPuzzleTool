@@ -47,6 +47,14 @@ export default class Wire extends Cell {
 
     render() {
         this.create_node();
-
+        for (let i=0; i<=this.display_directions.length; i++) {
+            let dir = this.display_directions[i];
+            let x_change = dir % 3; // 0, 1, 2
+            let y_change = (dir - x_change)/3; //0, 1, 2
+            this.graphic.moveTo(this.x, this.y)
+            x_change = ((x_change*this.dimension)/2) - ( this.dimension/2)
+            y_change = ((y_change*this.dimension)/2) - ( this.dimension/2)
+            this.graphic.lineTo(this.x + x_change, this.y + y_change)
+        }
     }
 }
