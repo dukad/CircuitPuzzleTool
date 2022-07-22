@@ -65,5 +65,8 @@ for (let i = 0; i < grid_height; i++) {
         let newCell = new Cell(j, i, cell_dimension, app, 0x000000, cell)
         newCell.draw()
         cell[i][j] = newCell;
+        console.log(newCell.x, newCell.y, j, i)
     }
 }
+
+console.log(grid_height, grid_width)

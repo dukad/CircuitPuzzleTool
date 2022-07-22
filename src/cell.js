@@ -27,13 +27,17 @@ export default class Cell {
     onClick() {
         let newWire;
         newWire = new Wire(this.x, this.y, this.dimension, this.app, this.color, this.matrix) // new wire object with same properties as the cell
-        this.matrix[this.x][this.y] = newWire; // set the matrix coordinates to the new object
+        this.matrix[this.y][this.x] = newWire; // set the matrix coordinates to the new object
         for (let i=-1; i<2; i++) { // iterate through possible directions
             for (let j=-1; j<2; j++) {
                 if ((i !== 0) || (j !== 0)) { // don't include the center
-                    if (this.matrix[Math.abs(this.x + i)][Math.abs(this.y + j)] instanceof Wire) { //if adjacent objects are a wire
-                        newWire.connect(this.matrix[this.x + i][this.y + j]) // connect this wire with adjacent wires
-                        this.matrix[this.x + i][this.y + j].render() //render adjacent wires again
+                    try {
+                        if (this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)] instanceof Wire) { //if adjacent objects are a wire
+                            newWire.connect(this.matrix[this.y + i][this.x + j]) // connect this wire with adjacent wires
+                            this.matrix[this.y + i][this.x + j].render() //render adjacent wires again
+                        }
+                    } catch(err) {
+                        console.log('hey there, this is bad code design, fix this part please')
                     }
                 }
             }
