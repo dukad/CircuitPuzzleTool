@@ -1,4 +1,4 @@
-import Cell, { Wire } from './src/cell.js';
+import Cell from './src/cell.js';
 // import Wire from './src/wire.js';
 
 document.body.style.backgroundColor = "black";
@@ -67,5 +67,3 @@ for (let i = 0; i < grid_height; i++) {
         cell[i][j] = newCell;
     }
 }
-
-
