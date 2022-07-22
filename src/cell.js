@@ -1,3 +1,5 @@
+import Wire from './src/wire.js';
+
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color) {
         this.graphic = new PIXI.Graphics;

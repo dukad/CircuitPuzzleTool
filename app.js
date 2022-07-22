@@ -1,14 +1,17 @@
 import Cell from './src/cell.js';
 
+document.body.style.backgroundColor = "black";
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {
-        width: window.outerWidth,
-        height: window.outerHeight,
+        width: window.innerWidth,
+        height: window.innerHeight,
         backgroundColor: 0x11111,
-        resolution: window.devicePixelRatio || 1,
+        resolution: devicePixelRatio = 5,
+        autoDensity: true,
     }
 )
+app.resize();
 
 // tell the html document to display the pixi application
 document.body.appendChild(app.view)
