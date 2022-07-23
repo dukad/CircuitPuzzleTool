@@ -1,14 +1,18 @@
 import Cell from './src/cell.js';
+// import Wire from './src/wire.js';
 
+document.body.style.backgroundColor = "black";
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {
-        width: window.outerWidth,
-        height: window.outerHeight,
+        width: window.innerWidth,
+        height: window.innerHeight,
         backgroundColor: 0x11111,
-        resolution: window.devicePixelRatio || 1,
+        resolution: devicePixelRatio = 5,
+        autoDensity: true,
     }
 )
+app.resize();
 
 // tell the html document to display the pixi application
 document.body.appendChild(app.view)
@@ -58,11 +62,11 @@ for (let i = 0; i < grid_height; i++) {
 for (let i = 0; i < grid_height; i++) {
     for (let j = 0; j < grid_width; j++)
     {
-        let newCell = new Cell(j * 45, i * 45, cell_dimension, app, 0x000000)
+        let newCell = new Cell(j, i, cell_dimension, app, 0x000000, cell)
         newCell.draw()
         cell[i][j] = newCell;
+        console.log(newCell.x, newCell.y, j, i)
     }
 }
 
-
-
+console.log(grid_height, grid_width)
