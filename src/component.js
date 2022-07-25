@@ -88,7 +88,6 @@ export class Resistor extends Component {
     }
 }
 
-
 export class VoltageSource extends Component {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix, value) {
         super(x_coordinate, y_coordinate, dimension, app, color, matrix);
@@ -101,10 +100,26 @@ export class VoltageSource extends Component {
         this.app.stage.addChild(this.graphic);
         this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
 
-        //draw a resistor
+        //draw a voltage source
         let x = this.xpixels;
         let y = this.ypixels + this.dimension/2;
         this.graphic.moveTo(x, y);
+        this.graphic.lineTo(x + this.dimension/6, y)
+        this.graphic.moveTo(x+ this.dimension*5/6, y)
+        this.graphic.lineTo(x + this.dimension, y)
+        this.graphic.drawCircle(x + this.dimension/2, y, this.dimension/(3))
+
+        this.graphic.lineStyle(2, 0x04b504)
+        //draw plus sign
+        this.graphic.moveTo(x + this.dimension*6/12, y)
+        this.graphic.lineTo(x + this.dimension*8/12, y)
+        this.graphic.moveTo(x + this.dimension*7/12, y - this.dimension*1/12)
+        this.graphic.lineTo(x + this.dimension*7/12, y + this.dimension*1/12)
+        //draw minus sign
+        this.graphic.moveTo(x + this.dimension*5/12, y - this.dimension*1/12)
+        this.graphic.lineTo(x + this.dimension*5/12, y + this.dimension*1/12)
+
+        this.graphic.lineStyle(5, 0x04b504);
 
         //set pivot point to the middle
         this.graphic.x = this.xpixels + this.dimension/2;
@@ -114,13 +129,19 @@ export class VoltageSource extends Component {
         if(((this.orientation === null) || (this.orientation ===3)) || (this.orientation === 5)) {
             this.graphic.rotation = 0;
         } else if ((this.orientation === 1) || (this.orientation === 7)) {
-            this.graphic.rotation = 3.1415/2
+            this.graphic.rotation = -3.1415/2
         } else if ((this.orientation === 0) || (this.orientation === 8)) {
-            this.graphic.rotation = 3.1415/4
-
+            this.graphic.rotation = 5*3.1415/4
+            this.graphic.moveTo(x, y);
+            this.graphic.lineTo(x - this.dimension/4, y);
+            this.graphic.moveTo(x + this.dimension, y);
+            this.graphic.lineTo(x + this.dimension * 5/4, y);
         } else if ((this.orientation === 2) || (this.orientation === 6)) {
-            this.graphic.rotation = 3.1415 * 3/4;
-
+            this.graphic.rotation = 5*3.1415 * 3/4;
+            this.graphic.moveTo(x, y);
+            this.graphic.lineTo(x - this.dimension/4, y);
+            this.graphic.moveTo(x + this.dimension, y);
+            this.graphic.lineTo(x + this.dimension * 5/4, y);
         }
         this.refresh()
         // console.log(this.connected_parts);
