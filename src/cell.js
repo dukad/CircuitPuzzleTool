@@ -1,4 +1,4 @@
- import Wire from '/wire.js';
+// import Wire from 'src/wire.js';
 
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
@@ -49,7 +49,6 @@ export default class Cell {
 }
 
 
-/*
 export class Wire extends Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
         super(x_coordinate, y_coordinate, dimension, app, color, matrix);
@@ -101,7 +100,7 @@ export class Wire extends Cell {
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {
-            this.create_node(this.dimension / 10) //create a small node
+            this.create_node(this.dimension / 9) //create a small node
         }
         this.graphic.lineStyle(10, 0x04b504); // change the linestyle to thick green
         this.display_directions.forEach(i => {
@@ -118,4 +117,4 @@ export class Wire extends Cell {
         });
         // console.log(this.x, this.y, this.display_directions, this.connected_parts.size)
     }
-} */
+}

@@ -51,7 +51,7 @@ export default class Wire extends Cell {
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {
-            this.create_node(this.dimension / 10) //create a small node
+            this.create_node(this.dimension / 9) //create a small node
         }
         this.graphic.lineStyle(10, 0x04b504); // change the linestyle to thick green
         this.display_directions.forEach(i => {
