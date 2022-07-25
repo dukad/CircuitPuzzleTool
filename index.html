@@ -12,10 +12,12 @@
     <div class='bar' id="bar1"></div>
     <div class='bar' id="bar2"></div>
     <div class='bar' id="bar3"></div>
-    <div id="menu" class="menu" ></div>
     <button class="menuHitBox" onclick="myFunction()"></button>
+    <div id="menu" class="menu"><script type="module" src="app.js">
+    </script></div>
+    <script type="module" src="/src/menu.js" referrerpolicy="origin"></script>
 
-    <script>
+    <!--<script>
         function myFunction(){
             let btn = document.getElementById('menu')
             if(btn.classList.contains('menuReturn')){
@@ -30,12 +32,10 @@
                 document.getElementById('bar1').classList.remove('bar1')
                 document.getElementById('bar3').classList.remove('bar3')
                 document.getElementById('bar2').classList.remove('bar2')
+
         }
     }
-    </script>
-
-    <script type="module" src="app.js">
-    </script>
+    </script>-->
 </body>
 
 </html>

@@ -1,7 +1,6 @@
 /*import './style.css';
 import 'index.html';*/
-export
-function myFunction(){
+export function myFunction(){
     let btn = document.getElementById('menu')
     if(btn.classList.contains('menuReturn')){
         btn.classList.add('menuPullOut')
