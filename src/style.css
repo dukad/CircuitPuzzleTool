@@ -1,0 +1,51 @@
+.bar {
+    width: 35px;
+    height: 5px;
+    background-color: Black;
+    margin: 5px 0;
+    position:relative;
+    left: 1398px;
+    top:2px;
+    transition: opacity 0.2s ease-in, transform .5s ease-in-out;
+}
+.menuHitBox {
+    width: 35px;
+    height: 27px;
+    background-color: gray;
+    opacity: 0;
+    margin: 6px 0;
+    position:fixed;
+    left: 1408px;
+    top:4px
+}
+
+.menu {
+    background-color: #c4b9b1;
+    width: 250px;
+    height: 1000px;
+    position: relative;
+    left: 1442px;
+    top: 2px;
+    transition: transform .2s ease-in-out;
+}
+.menuPullOut {
+    transform: translatex(-250px);
+}
+.menuReturn{
+    transform: translateX(250px);
+}
+.bar1{
+    transform: translatey(10px) rotate(-45deg);
+}
+.bar2{
+    opacity: 0;
+}
+.bar3{
+    transform: translatey(-10px) rotate(45deg);
+}
+/*.gamePage{
+    width: 2000px;
+    height: 2000px;
+    left: 0;
+    top:10px;
+}

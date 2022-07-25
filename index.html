@@ -5,63 +5,33 @@
     <title>Circuit Puzzle Tool</title>
     <script src="js/pixi.min.js">
     </script>
-    <style>
-        .bar {
-            width: 35px;
-            height: 5px;
-            background-color: Black;
-            margin: 6px 0;
-            position:relative;
-            left: 1400px;
-            top:2px
-        }
-        .menuHitBox {
-            width: 35px;
-            height: 27px;
-            background-color: gray;
-            opacity: 0;
-            margin: 6px 0;
-            position:fixed;
-            left: 1408px;
-            top:4px
-        }
-
-        .menu {
-            background-color: #c4b9b1;
-            width: 250px;
-            height: 1000px;
-            position: relative;
-            left: 1442px;
-            top: 2px;
-            transition: transform .2s ease-in-out;
-        }
-        .menuPullOut {
-            transform: translatex(-250px);
-        }
-        .menuReturn{
-            transform: translateX(250px);
-        }
-    </style>
-
+    <link rel="stylesheet" href="/src/style.css">
 </head>
 
 <body>
-    <div class='bar'></div>
-    <div class='bar'></div>
-    <div class='bar'></div>
+    <div class='bar' id="bar1"></div>
+    <div class='bar' id="bar2"></div>
+    <div class='bar' id="bar3"></div>
     <div id="menu" class="menu" ></div>
     <button class="menuHitBox" onclick="myFunction()"></button>
+
     <script>
         function myFunction(){
             let btn = document.getElementById('menu')
             if(btn.classList.contains('menuReturn')){
                 btn.classList.add('menuPullOut')
                 btn.classList.remove('menuReturn')
+                document.getElementById('bar1').classList.add('bar1')
+                document.getElementById('bar2').classList.add('bar2')
+                document.getElementById('bar3').classList.add('bar3')
             } else {
                 btn.classList.add('menuReturn')
                 btn.classList.remove('menuPullOut')
-            }
+                document.getElementById('bar1').classList.remove('bar1')
+                document.getElementById('bar3').classList.remove('bar3')
+                document.getElementById('bar2').classList.remove('bar2')
         }
+    }
     </script>
 
     <script type="module" src="app.js">
