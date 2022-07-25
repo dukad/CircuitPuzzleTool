@@ -1,4 +1,5 @@
-import Cell, { Resistor } from './src/cell.js';
+import Cell, { Resistor, VoltageSource } from './src/cell.js';
+// import {VoltageSource} from "./src/component";
 // import { Resistor } from './src/component.js';
 // import Wire from './src/wire.js';
 
@@ -49,3 +50,7 @@ cell[5][5] = newRes;
 newRes.draw();
 newRes.render();
 
+let newVS = new VoltageSource(8, 8, cell_dimension, app, 0x000000, cell, 15);
+cell[8][8] = newVS;
+newVS.draw();
+newVS.render();
