@@ -3,7 +3,6 @@ import Cell from 'cell.js';
 export default class Wire extends Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
         super(x_coordinate, y_coordinate, dimension, app, color, matrix);
-        this.connected_parts = new Set(); //empty sets!
         this.display_directions = new Set();
     }
 
