@@ -1,4 +1,4 @@
-// import Wire from 'src/wire.js';
+//import Wire from './wire.js';
 
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
@@ -47,7 +47,6 @@ export default class Cell {
         newWire.render(); //draw wire
     }
 }
-
 
 export class Wire extends Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
