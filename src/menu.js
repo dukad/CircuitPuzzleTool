@@ -1,4 +1,4 @@
-/*import './style.css';
+/*import './styleIndex.css';
 import 'index.html';*/
 export function myFunction(){
     let btn = document.getElementById('menu')

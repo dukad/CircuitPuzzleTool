@@ -62,20 +62,6 @@
     font-size: 36px;
     margin-left: 50px;
 }
+.questionBar {
 
-
-/*.bar1{
-    transform: translatey(10px) rotate(-45deg);
-}
-.bar2{
-    opacity: 0;
-}
-.bar3{
-    transform: translatey(-10px) rotate(45deg);
-}
-/*.gamePage{
-    width: 2000px;
-    height: 2000px;
-    left: 0;
-    top:10px;
 }
