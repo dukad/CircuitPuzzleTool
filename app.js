@@ -3,13 +3,13 @@ import Cell, { Resistor, VoltageSource } from './src/cell.js';
 // import { Resistor } from './src/component.js';
 // import Wire from './src/wire.js';
 
-document.body.style.backgroundColor = "gray";
+document.body.style.backgroundColor = 'gray';
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: 0x666565,
+        backgroundColor: 'grey',
         resolution: devicePixelRatio = 5,
         autoDensity: true,
     }
@@ -36,15 +36,12 @@ for (let i = 0; i < grid_height; i++) {
 }
 // create a matrix of cells
 for (let i = 0; i < grid_height; i++) {
-    for (let j = 0; j < grid_width; j++)
-    {
-        let newCell = new Cell(j,i+8 , cell_dimension, app, 0x666565, cell)
+    for (let j = 0; j < grid_width; j++) {
+        let newCell = new Cell(j , i, cell_dimension, app, cell)
         newCell.draw()
         cell[i][j] = newCell;
-        // console.log(newCell.x, newCell.y, j, i)
     }
 }
-z
 let newRes = new Resistor(5, 5, cell_dimension, app,  cell, 15);
 cell[5][5] = newRes;
 newRes.draw();
