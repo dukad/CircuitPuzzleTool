@@ -1,21 +1,40 @@
 import Cell from './cell.js';
 
 export default class Wire extends Cell {
-    constructor(x_coordinate, y_coordinate, dimension, app, color, matrix) {
-        super(x_coordinate, y_coordinate, dimension, app, color, matrix);
+    /**
+     * Circuit Wires
+     * @param x_coordinate position in matrix
+     * @param y_coordinate
+     * @param dimension pixel dimension of the cell
+     * @param app PIXI application
+     * @param matrix matrix holding the cell
+     */
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
+        super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.display_directions = new Set();
     }
 
     display_orient(direction) {
+        /**
+         * adds direction to the set of directions needed to display
+         * @type {number}
+         */
         this.display_directions.add(direction)
     }
 
     undisplay(direction) {
+        /**
+         * removes a direction from the display
+         * @type {number}
+         */
         this.display_directions.delete(direction)
     }
 
-    create_node(size) { //draw a circle of varying size
-        // this.graphic.lineStyle(0, 0x04b504, 1);
+    create_node(size) {
+        /**
+         * draw a circle of different sizes in the middle of a cell
+         * @param {number} size in pixels
+         */
         this.graphic.beginFill(0x04b504);
         this.graphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
         this.graphic.endFill();
@@ -23,13 +42,25 @@ export default class Wire extends Cell {
     }
 
     render() {
+        /**
+         * recreate the way the object looks on screen
+         */
         this.graphic.destroy() // destroy any current lines draw on
         this.graphic = new PIXI.Graphics // recreate the item
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {
-            this.create_node(this.dimension / 9) //create a small node
+            this.create_node(this.dimension / 9); //create a small node
         }
+        this.draw_a_wire();
+        // console.log(this.x, this.y, this.display_directions, this.connected_parts.size)
+        console.log(this.connected_parts);
+    }
+
+    draw_a_wire() {
+        /**
+         * actually draw a wire
+         */
         this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
         this.display_directions.forEach(i => {
             let dir = i;
@@ -43,8 +74,6 @@ export default class Wire extends Cell {
             this.graphic.lineTo(x_location + x_change, y_location + y_change);
             this.app.stage.addChild(this.graphic);
         });
-        // console.log(this.x, this.y, this.display_directions, this.connected_parts.size)
-        console.log(this.connected_parts);
     }
 }
 
