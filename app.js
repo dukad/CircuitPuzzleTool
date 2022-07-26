@@ -9,7 +9,7 @@ const app = new PIXI.Application(
     {
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: 0x000000,
+        backgroundColor: 0x666565,
         resolution: devicePixelRatio = 5,
         autoDensity: true,
     }
@@ -38,7 +38,7 @@ for (let i = 0; i < grid_height; i++) {
 for (let i = 0; i < grid_height; i++) {
     for (let j = 0; j < grid_width; j++)
     {
-        let newCell = new Cell(j, i, cell_dimension, app, 0x000000, cell)
+        let newCell = new Cell(j, i, cell_dimension, app, 0x666565, cell)
         newCell.draw()
         cell[i][j] = newCell;
         // console.log(newCell.x, newCell.y, j, i)
