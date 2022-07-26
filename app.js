@@ -38,13 +38,13 @@ for (let i = 0; i < grid_height; i++) {
 for (let i = 0; i < grid_height; i++) {
     for (let j = 0; j < grid_width; j++)
     {
-        let newCell = new Cell(j, i, cell_dimension, app, 0x666565, cell)
+        let newCell = new Cell(i+5,j , cell_dimension, app, 0x666565, cell)
         newCell.draw()
         cell[i][j] = newCell;
         // console.log(newCell.x, newCell.y, j, i)
     }
 }
-//
+
 let newRes = new Resistor(5, 5, cell_dimension, app, 0x000000, cell, 15);
 cell[5][5] = newRes;
 newRes.draw();
