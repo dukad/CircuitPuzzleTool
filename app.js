@@ -45,12 +45,3 @@ for (let i = 0; i < grid_height; i++) {
     }
 }
 //
-let newRes = new Resistor(5, 5, cell_dimension, app,  cell, 15);
-cell[5][5] = newRes;
-newRes.draw();
-newRes.render();
-
-let newVS = new VoltageSource(8, 8, cell_dimension, app, cell, 15);
-cell[8][8] = newVS;
-newVS.draw();
-newVS.render();

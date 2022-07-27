@@ -3,6 +3,7 @@
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
         this.graphic = new PIXI.Graphics; //Container for the graphics of each cell
+        this.drawingGraphic = new PIXI.Graphics;
         this.app = app; //pixi application
         this.x = x_coordinate; //index coordinates of the cell
         this.y = y_coordinate;
@@ -102,7 +103,13 @@ export default class Cell {
         /**
          * onClick method for all cells, wires, and components
          */
-        this.makePart('Wire');
+        if (this instanceof Wire) {
+            this.makePart('Resistor');
+        } else if (this instanceof Resistor) {
+            this.makePart('VoltageSource');
+        } else {
+            this.makePart('Wire');
+        }
         // console.log('onClick running')
     }
 
@@ -158,9 +165,6 @@ export default class Cell {
                 }
             }
         }
-        // this.graphic.clear()
-        // this.graphic = new PIXI.Graphics
-        // this.draw()
         newPart.draw(); //draw background
         newPart.render(); //draw wire
         newPart.graphic = this.graphic
@@ -204,6 +208,7 @@ export class Wire extends Cell {
          * draw a circle of different sizes in the middle of a cell
          * @param {number} size in pixels
          */
+        this.graphic.lineStyle(0, 0x000000)
         this.graphic.beginFill(0x04b504);
         this.graphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
         this.graphic.endFill();
@@ -230,18 +235,20 @@ export class Wire extends Cell {
         /**
          * actually draw a wire
          */
-        this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
+        // this.graphic.lineStyle.re
+        this.drawingGraphic.clear()
+        this.drawingGraphic.lineStyle(5, 0x04b504, 2); // change the linestyle to thick green
         this.display_directions.forEach(i => {
             let dir = i;
             let x_change = dir % 3; // 0, 1, 2
             let y_change = (dir - x_change) / 3; //0, 1, 2
             let x_location = this.xpixels + this.dimension / 2; //center on the cell
             let y_location = this.ypixels + this.dimension / 2;
-            this.graphic.moveTo(x_location, y_location); // move to center of cell
+            this.drawingGraphic.moveTo(x_location, y_location); // move to center of cell
             x_change = (((x_change * this.dimension)) - (this.dimension))/2;
             y_change = (((y_change * this.dimension)) - (this.dimension))/2;
-            this.graphic.lineTo(x_location + x_change, y_location + y_change);
-            this.app.stage.addChild(this.graphic);
+            this.drawingGraphic.lineTo(x_location + x_change, y_location + y_change);
+            this.app.stage.addChild(this.drawingGraphic);
         });
     }
 }
@@ -280,18 +287,18 @@ export class Component extends Cell {
          * rotate the graphic depending on orientation
          */
         //set pivot point to the middle
-        this.graphic.x = this.xpixels + this.dimension / 2;
-        this.graphic.y = this.ypixels + this.dimension / 2;
-        this.graphic.pivot.x = this.graphic.x;
-        this.graphic.pivot.y = this.graphic.y;
+        this.drawingGraphic.x = this.xpixels + this.dimension / 2;
+        this.drawingGraphic.y = this.ypixels + this.dimension / 2;
+        this.drawingGraphic.pivot.x = this.drawingGraphic.x;
+        this.drawingGraphic.pivot.y = this.drawingGraphic.y;
         if (((this.orientation === null) || (this.orientation === 3)) || (this.orientation === 5)) {
-            this.graphic.rotation = 0;
+            this.drawingGraphic.rotation = 0;
         } else if ((this.orientation === 1) || (this.orientation === 7)) {
-            this.graphic.rotation = -3.1415 / 2
+            this.drawingGraphic.rotation = -3.1415 / 2
         } else if ((this.orientation === 0) || (this.orientation === 8)) {
-            this.graphic.rotation = 5 * 3.1415 / 4
+            this.drawingGraphic.rotation = 5 * 3.1415 / 4
         } else if ((this.orientation === 2) || (this.orientation === 6)) {
-            this.graphic.rotation = 5 * 3.1415 * 3 / 4;
+            this.drawingGraphic.rotation = 5 * 3.1415 * 3 / 4;
         }
     }
 
@@ -339,10 +346,10 @@ export class Resistor extends Component {
         /**
          * render method for resistor!
          */
-        this.graphic.destroy() // destroy any current lines draw on
-        this.graphic = new PIXI.Graphics // recreate the item
-        this.app.stage.addChild(this.graphic);
-        this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
+        // this.graphic.clear() // destroy any current lines draw on
+        // this.graphic = new PIXI.Graphics // recreate the item
+        this.app.stage.addChild(this.drawingGraphic);
+        this.drawingGraphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
 
         this.draw_a_resistor()
         this.rotate()
@@ -356,25 +363,25 @@ export class Resistor extends Component {
          */
         let x = this.xpixels;
         let y = this.ypixels + this.dimension/2;
-        this.graphic.moveTo(x, y);
-        this.graphic.lineTo(x+this.dimension/10, y)
-        this.graphic.lineTo(x+this.dimension/5, y - this.dimension/4)
-        this.graphic.lineTo(x+this.dimension*2/5, y + this.dimension/4)
-        this.graphic.lineTo(x+this.dimension*3/5, y - this.dimension/4)
-        this.graphic.lineTo(x+this.dimension*4/5, y + this.dimension/4)
-        this.graphic.lineTo(x+this.dimension*9/10, y)
-        this.graphic.lineTo(x+this.dimension, y)
+        this.drawingGraphic.moveTo(x, y);
+        this.drawingGraphic.lineTo(x+this.dimension/10, y)
+        this.drawingGraphic.lineTo(x+this.dimension/5, y - this.dimension/4)
+        this.drawingGraphic.lineTo(x+this.dimension*2/5, y + this.dimension/4)
+        this.drawingGraphic.lineTo(x+this.dimension*3/5, y - this.dimension/4)
+        this.drawingGraphic.lineTo(x+this.dimension*4/5, y + this.dimension/4)
+        this.drawingGraphic.lineTo(x+this.dimension*9/10, y)
+        this.drawingGraphic.lineTo(x+this.dimension, y)
 
         if ((this.orientation === 0) || (this.orientation === 8)) {
-            this.graphic.moveTo(x, y);
-            this.graphic.lineTo(x - this.dimension / 4, y);
-            this.graphic.moveTo(x + this.dimension, y);
-            this.graphic.lineTo(x + this.dimension * 5 / 4, y);
+            this.drawingGraphic.moveTo(x, y);
+            this.drawingGraphic.lineTo(x - this.dimension / 4, y);
+            this.drawingGraphic.moveTo(x + this.dimension, y);
+            this.drawingGraphic.lineTo(x + this.dimension * 5 / 4, y);
         } else if ((this.orientation === 2) || (this.orientation === 6)) {
-            this.graphic.moveTo(x, y);
-            this.graphic.lineTo(x - this.dimension / 4, y);
-            this.graphic.moveTo(x + this.dimension, y);
-            this.graphic.lineTo(x + this.dimension * 5 / 4, y);
+            this.drawingGraphic.moveTo(x, y);
+            this.drawingGraphic.lineTo(x - this.dimension / 4, y);
+            this.drawingGraphic.moveTo(x + this.dimension, y);
+            this.drawingGraphic.lineTo(x + this.dimension * 5 / 4, y);
         }
     }
 
@@ -400,10 +407,10 @@ export class VoltageSource extends Component {
         /**
          * delete old graphic and draw a new voltage source in correct orientation
          */
-        this.graphic.destroy() // destroy any current lines draw on
-        this.graphic = new PIXI.Graphics // recreate the item
-        this.app.stage.addChild(this.graphic);
-        this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
+        // this.graphic.destroy() // destroy any current lines draw on
+        // this.graphic = new PIXI.Graphics // recreate the item
+        this.app.stage.addChild(this.drawingGraphic);
+        this.drawingGraphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
 
         this.draw_a_voltagesource();
         this.rotate()
@@ -418,34 +425,34 @@ export class VoltageSource extends Component {
          */
         let x = this.xpixels;
         let y = this.ypixels + this.dimension / 2;
-        this.graphic.moveTo(x, y);
-        this.graphic.lineTo(x + this.dimension / 6, y)
-        this.graphic.moveTo(x + this.dimension * 5 / 6, y)
-        this.graphic.lineTo(x + this.dimension, y)
-        this.graphic.drawCircle(x + this.dimension / 2, y, this.dimension / (3))
+        this.drawingGraphic.moveTo(x, y);
+        this.drawingGraphic.lineTo(x + this.dimension / 6, y)
+        this.drawingGraphic.moveTo(x + this.dimension * 5 / 6, y)
+        this.drawingGraphic.lineTo(x + this.dimension, y)
+        this.drawingGraphic.drawCircle(x + this.dimension / 2, y, this.dimension / (3))
 
         this.graphic.lineStyle(2, 0x04b504)
         //draw plus sign
-        this.graphic.moveTo(x + this.dimension * 6 / 12, y)
-        this.graphic.lineTo(x + this.dimension * 8 / 12, y)
-        this.graphic.moveTo(x + this.dimension * 7 / 12, y - this.dimension * 1 / 12)
-        this.graphic.lineTo(x + this.dimension * 7 / 12, y + this.dimension * 1 / 12)
+        this.drawingGraphic.moveTo(x + this.dimension * 6 / 12, y)
+        this.drawingGraphic.lineTo(x + this.dimension * 8 / 12, y)
+        this.drawingGraphic.moveTo(x + this.dimension * 7 / 12, y - this.dimension * 1 / 12)
+        this.drawingGraphic.lineTo(x + this.dimension * 7 / 12, y + this.dimension * 1 / 12)
         //draw minus sign
-        this.graphic.moveTo(x + this.dimension * 5 / 12, y - this.dimension * 1 / 12)
-        this.graphic.lineTo(x + this.dimension * 5 / 12, y + this.dimension * 1 / 12)
+        this.drawingGraphic.moveTo(x + this.dimension * 5 / 12, y - this.dimension * 1 / 12)
+        this.drawingGraphic.lineTo(x + this.dimension * 5 / 12, y + this.dimension * 1 / 12)
 
-        this.graphic.lineStyle(5, 0x04b504);
+        this.drawingGraphic.lineStyle(5, 0x04b504);
 
         if ((this.orientation === 0) || (this.orientation === 8)) {
-            this.graphic.moveTo(x, y);
-            this.graphic.lineTo(x - this.dimension / 4, y);
-            this.graphic.moveTo(x + this.dimension, y);
-            this.graphic.lineTo(x + this.dimension * 5 / 4, y);
+            this.drawingGraphic.moveTo(x, y);
+            this.drawingGraphic.lineTo(x - this.dimension / 4, y);
+            this.drawingGraphic.moveTo(x + this.dimension, y);
+            this.drawingGraphic.lineTo(x + this.dimension * 5 / 4, y);
         } else if ((this.orientation === 2) || (this.orientation === 6)) {
-            this.graphic.moveTo(x, y);
-            this.graphic.lineTo(x - this.dimension / 4, y);
-            this.graphic.moveTo(x + this.dimension, y);
-            this.graphic.lineTo(x + this.dimension * 5 / 4, y);
+            this.drawingGraphic.moveTo(x, y);
+            this.drawingGraphic.lineTo(x - this.dimension / 4, y);
+            this.drawingGraphic.moveTo(x + this.dimension, y);
+            this.drawingGraphic.lineTo(x + this.dimension * 5 / 4, y);
         }
     }
 }
