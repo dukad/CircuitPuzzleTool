@@ -9,7 +9,8 @@ export default class Cell {
         this.dimension = dimension; // size of the cell
         this.graphic.interactive = true; // make a button
         this.graphic.buttonMode = true;
-        this.graphic.on('pointerdown', () => this.onClick()) //run the onClick method when clicked
+        this.graphic.on('mousedown', () => this.onClick()) //run the onClick method when clicked
+        this.graphic.on('rightdown', () => this.onRightClick());
         this.xpixels = this.x * this.dimension; // pixel coordinates of the cell
         this.ypixels = this.y * this.dimension;
         this.matrix = matrix; //external matrix of the cell
@@ -27,6 +28,7 @@ export default class Cell {
         let direction = this.find_direction(part);
         this.display_orient(direction)
         part.display_orient(this.reverse_direction(direction))
+
     }
 
     display_orient(direction) {
@@ -87,28 +89,53 @@ export default class Cell {
         /**
          * draws the cell that backgrounds the components
          */
+        this.graphic.clear() // destroy any current lines draw on
         this.graphic.lineStyle(2, 0x1f1f1f, 1) // set lines which border cells and become the grid
         this.graphic.beginFill(0x000000) //fill with black
         this.graphic.drawRect(this.xpixels, this.ypixels, this.dimension, this.dimension) //create square
         this.graphic.endFill()
         this.app.stage.addChild(this.graphic) //stage this graphic
+        console.log('drawing', this.x, this.y)
     }
 
     onClick() {
         /**
          * onClick method for all cells, wires, and components
          */
-        this.makeWire();
-        console.log('onClick running')
+        this.makePart('Wire');
+        // console.log('onClick running')
     }
 
-    makeWire() {
+    onRightClick() {
         /**
-         * forms a new wire in place of the cell
+         * onClick method for all cells, wires, and components
          */
-        let newWire;
-        newWire = new Wire(this.x, this.y, this.dimension, this.app, this.matrix) // new wire object with same properties as the cell
-        this.matrix[this.y][this.x] = newWire; // set the matrix coordinates to the new object
+        if(this instanceof Resistor) {
+            this.makePart('VoltageSource');
+        } else {
+            this.makePart('Resistor')
+        }
+        // console.log('onClick running')
+    }
+
+
+    makePart(part) {
+        /**
+         * forms a new part in place of whatever was currently present
+         */
+
+        let newPart;
+        if(part === 'Wire') {
+            newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix); // new wire object with same properties as the cell
+        }
+        if(part === 'Resistor') {
+            newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15);
+        }
+        if(part === 'VoltageSource') {
+            newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15);
+        }
+        this.matrix[this.y][this.x] = newPart; // set the matrix coordinates to the new object
+        newPart.draw()
 
         // iterate through possible directions
         for (let i=-1; i<2; i++) {
@@ -117,12 +144,13 @@ export default class Cell {
                     try {
                         let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)]
                         if ((part instanceof Wire) || (part instanceof Component)){ //if adjacent objects are a wire
-                            newWire.connect(part) // connect this wire with adjacent wires
+                            newPart.connect(part) // connect this wire with adjacent wires
+                            part.draw()
                             part.render() //render adjacent wires again
                             if (part instanceof Component) {
                                 part.refresh();
                             }
-                            newWire.render()
+                            // newPart.render()
                         }
                     } catch(err) {
                         console.log('issue happening in onClick')
@@ -130,10 +158,13 @@ export default class Cell {
                 }
             }
         }
+        // this.graphic.clear()
+        // this.graphic = new PIXI.Graphics
+        // this.draw()
+        newPart.draw(); //draw background
+        newPart.render(); //draw wire
+        newPart.graphic = this.graphic
         delete this // delete the original cell object
-        newWire.draw(); //draw background
-        newWire.render(); //draw wire
-        console.log('makeWire running')
     }
 }
 
@@ -183,8 +214,8 @@ export class Wire extends Cell {
         /**
          * recreate the way the object looks on screen
          */
-        this.graphic.destroy() // destroy any current lines draw on
-        this.graphic = new PIXI.Graphics // recreate the item
+
+        // this.graphic = new PIXI.Graphics // recreate the item
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {

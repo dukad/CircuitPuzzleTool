@@ -9,7 +9,7 @@ const app = new PIXI.Application(
     {
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: 0x000000,
+        backgroundColor: 0xFFFFFF,
         resolution: devicePixelRatio = 5,
         autoDensity: true,
     }
