@@ -9,7 +9,7 @@ const app = new PIXI.Application(
     {
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: 'grey',
+        backgroundColor: 0xFFFFFF,
         resolution: devicePixelRatio = 5,
         autoDensity: true,
     }
@@ -36,18 +36,11 @@ for (let i = 0; i < grid_height; i++) {
 }
 // create a matrix of cells
 for (let i = 0; i < grid_height; i++) {
-    for (let j = 0; j < grid_width; j++) {
-        let newCell = new Cell(j , i, cell_dimension, app, cell)
+    for (let j = 0; j < grid_width; j++)
+    {
+        let newCell = new Cell(j, i, cell_dimension, app, cell)
         newCell.draw()
         cell[i][j] = newCell;
+        // console.log(newCell.x, newCell.y, j, i)
     }
 }
-let newRes = new Resistor(5, 5, cell_dimension, app,  cell, 15);
-cell[5][5] = newRes;
-newRes.draw();
-newRes.render();
-
-let newVS = new VoltageSource(8, 8, cell_dimension, app, cell, 15);
-cell[8][8] = newVS;
-newVS.draw();
-newVS.render();
