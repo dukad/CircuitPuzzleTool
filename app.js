@@ -3,7 +3,7 @@ import Cell, { Resistor, VoltageSource } from './src/cell.js';
 // import { Resistor } from './src/component.js';
 // import Wire from './src/wire.js';
 
-document.body.style.backgroundColor = 'gray';
+document.body.style.backgroundColor = 'silver';
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {

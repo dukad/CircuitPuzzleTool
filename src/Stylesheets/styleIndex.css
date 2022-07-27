@@ -63,5 +63,22 @@
     margin-left: 50px;
 }
 .questionBar {
+    background-color: #a6a6a6;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    opacity: 60%;
+}
+.questionBarOut {
+    width:15%;
+}
 
+.questionMark{
+    left:5px;
+    position: fixed;
+    height: 27px;
+    width: 27px;
+    border: 1px solid black;
+    border-radius: 50px;
+    background-color: lightslategray;
 }
