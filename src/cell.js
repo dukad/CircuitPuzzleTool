@@ -96,15 +96,17 @@ export default class Cell {
         this.graphic.drawRect(this.xpixels, this.ypixels, this.dimension, this.dimension) //create square
         this.graphic.endFill()
         this.app.stage.addChild(this.graphic) //stage this graphic
-        console.log('drawing', this.x, this.y)
+        // console.log('drawing', this.x, this.y)
     }
 
     onClick() {
         /**
          * onClick method for all cells, wires, and components
          */
+
         if (this instanceof Wire) {
             this.makePart('Resistor');
+            console.log('hey there')
         } else if (this instanceof Resistor) {
             this.makePart('VoltageSource');
         } else {
@@ -125,24 +127,47 @@ export default class Cell {
         // console.log('onClick running')
     }
 
+    rerender() {
+        /**
+         * rerender surrounding parts ensuring everything is up to date
+         */
+        for (let i=-1; i<2; i++) { // iterate through possible directions
+            for (let j=-1; j<2; j++) {
+                if ((i !== 0) || (j !== 0)) { // don't include the center
+                    let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)];
+                    if ((part instanceof Wire) || (part instanceof Component)) { //if adjacent objects are a wire
+                        part.render()
+                        }
+                    }
+                }
+            }
+
+        }
+
 
     makePart(part) {
         /**
          * forms a new part in place of whatever was currently present
          */
+        if ((this instanceof Wire) || (this instanceof Component)) {
+            this.drawingGraphic.clear()
+        }
 
         let newPart;
         if(part === 'Wire') {
             newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix); // new wire object with same properties as the cell
         }
-        if(part === 'Resistor') {
+        else if(part === 'Resistor') {
             newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15);
         }
-        if(part === 'VoltageSource') {
+        else if(part === 'VoltageSource') {
             newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15);
         }
+        else {
+            alert('Input non valid circuit part')
+        }
         this.matrix[this.y][this.x] = newPart; // set the matrix coordinates to the new object
-        newPart.draw()
+        // newPart.draw()
 
         // iterate through possible directions
         for (let i=-1; i<2; i++) {
@@ -152,7 +177,6 @@ export default class Cell {
                         let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)]
                         if ((part instanceof Wire) || (part instanceof Component)){ //if adjacent objects are a wire
                             newPart.connect(part) // connect this wire with adjacent wires
-                            part.draw()
                             part.render() //render adjacent wires again
                             if (part instanceof Component) {
                                 part.refresh();
@@ -165,9 +189,10 @@ export default class Cell {
                 }
             }
         }
-        newPart.draw(); //draw background
+        newPart.draw()
         newPart.render(); //draw wire
-        newPart.graphic = this.graphic
+        newPart.rerender();
+
         delete this // delete the original cell object
     }
 }
@@ -208,18 +233,17 @@ export class Wire extends Cell {
          * draw a circle of different sizes in the middle of a cell
          * @param {number} size in pixels
          */
-        this.graphic.lineStyle(0, 0x000000)
-        this.graphic.beginFill(0x04b504);
-        this.graphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
-        this.graphic.endFill();
-        this.app.stage.addChild(this.graphic);
+        this.drawingGraphic.beginFill(0x04b504);
+        this.drawingGraphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
+        this.drawingGraphic.endFill();
+        this.app.stage.addChild(this.drawingGraphic);
     }
 
     render() {
         /**
          * recreate the way the object looks on screen
          */
-
+        this.drawingGraphic.clear()
         // this.graphic = new PIXI.Graphics // recreate the item
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
@@ -236,7 +260,7 @@ export class Wire extends Cell {
          * actually draw a wire
          */
         // this.graphic.lineStyle.re
-        this.drawingGraphic.clear()
+        // this.drawingGraphic.clear()
         this.drawingGraphic.lineStyle(5, 0x04b504, 2); // change the linestyle to thick green
         this.display_directions.forEach(i => {
             let dir = i;
@@ -348,6 +372,7 @@ export class Resistor extends Component {
          */
         // this.graphic.clear() // destroy any current lines draw on
         // this.graphic = new PIXI.Graphics // recreate the item
+        this.drawingGraphic.clear()
         this.app.stage.addChild(this.drawingGraphic);
         this.drawingGraphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
 
@@ -409,6 +434,7 @@ export class VoltageSource extends Component {
          */
         // this.graphic.destroy() // destroy any current lines draw on
         // this.graphic = new PIXI.Graphics // recreate the item
+        this.drawingGraphic.clear()
         this.app.stage.addChild(this.drawingGraphic);
         this.drawingGraphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
 
@@ -431,7 +457,7 @@ export class VoltageSource extends Component {
         this.drawingGraphic.lineTo(x + this.dimension, y)
         this.drawingGraphic.drawCircle(x + this.dimension / 2, y, this.dimension / (3))
 
-        this.graphic.lineStyle(2, 0x04b504)
+        this.drawingGraphic.lineStyle(2, 0x04b504)
         //draw plus sign
         this.drawingGraphic.moveTo(x + this.dimension * 6 / 12, y)
         this.drawingGraphic.lineTo(x + this.dimension * 8 / 12, y)

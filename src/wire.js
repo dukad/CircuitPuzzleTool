@@ -1,6 +1,6 @@
 import Cell from './cell.js';
 
-export default class Wire extends Cell {
+export class Wire extends Cell {
     /**
      * Circuit Wires
      * @param x_coordinate position in matrix
@@ -35,18 +35,18 @@ export default class Wire extends Cell {
          * draw a circle of different sizes in the middle of a cell
          * @param {number} size in pixels
          */
-        this.graphic.beginFill(0x04b504);
-        this.graphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
-        this.graphic.endFill();
-        this.app.stage.addChild(this.graphic);
+        this.drawingGraphic.beginFill(0x04b504);
+        this.drawingGraphic.drawCircle(this.xpixels + this.dimension/2, this.ypixels + this.dimension/2, size);
+        this.drawingGraphic.endFill();
+        this.app.stage.addChild(this.drawingGraphic);
     }
 
     render() {
         /**
          * recreate the way the object looks on screen
          */
-        this.graphic.destroy() // destroy any current lines draw on
-        this.graphic = new PIXI.Graphics // recreate the item
+        this.drawingGraphic.clear()
+        // this.graphic = new PIXI.Graphics // recreate the item
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {
@@ -61,19 +61,20 @@ export default class Wire extends Cell {
         /**
          * actually draw a wire
          */
-        this.graphic.lineStyle(5, 0x04b504); // change the linestyle to thick green
+        // this.graphic.lineStyle.re
+        // this.drawingGraphic.clear()
+        this.drawingGraphic.lineStyle(5, 0x04b504, 2); // change the linestyle to thick green
         this.display_directions.forEach(i => {
             let dir = i;
             let x_change = dir % 3; // 0, 1, 2
             let y_change = (dir - x_change) / 3; //0, 1, 2
             let x_location = this.xpixels + this.dimension / 2; //center on the cell
             let y_location = this.ypixels + this.dimension / 2;
-            this.graphic.moveTo(x_location, y_location); // move to center of cell
+            this.drawingGraphic.moveTo(x_location, y_location); // move to center of cell
             x_change = (((x_change * this.dimension)) - (this.dimension))/2;
             y_change = (((y_change * this.dimension)) - (this.dimension))/2;
-            this.graphic.lineTo(x_location + x_change, y_location + y_change);
-            this.app.stage.addChild(this.graphic);
+            this.drawingGraphic.lineTo(x_location + x_change, y_location + y_change);
+            this.app.stage.addChild(this.drawingGraphic);
         });
     }
 }
-
