@@ -1,6 +1,6 @@
-import Cell from './cell.js';
+import Cell from "./cell.js";
 
-export class Wire extends Cell {
+export default class Wire extends Cell {
     /**
      * Circuit Wires
      * @param x_coordinate position in matrix
