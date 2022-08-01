@@ -14,6 +14,7 @@ const app = new PIXI.Application(
         autoDensity: true,
     }
 )
+app.ticker.maxFPS = 15;
 app.resize();
 
 // tell the html document to display the pixi application
