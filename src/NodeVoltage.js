@@ -1,4 +1,4 @@
-import Cell, { Resistor, Component } from "./cell";
+import Cell, { Resistor, VoltageSource, CurrentSource } from "./cell.js";
 
 export default class NodeVoltage {
     constructor(cell) {
@@ -7,7 +7,5 @@ export default class NodeVoltage {
 
     solve() {
         console.log('solving');
-        let importing_cells = new Set()
-
     }
 }
