@@ -8,12 +8,14 @@ export default class Cell {
         this.dimension = dimension; // size of the cell
         this.graphic.interactive = true; // make a button
         this.graphic.buttonMode = true;
-        this.graphic.on('mousedown', () => this.onClick()) //run the onClick method when clicked
+        this.graphic.on('click', () => this.onClick()) //run the onClick method when clicked
         this.graphic.on('rightdown', () => this.onRightClick());
         this.xpixels = this.x * this.dimension; // pixel coordinates of the cell
         this.ypixels = this.y * this.dimension;
         this.matrix = matrix; //external matrix of the cell
         this.connected_parts = new Set();
+        this.graphic.on('mouseover', () => this.onHover());
+
     }
 
     connect(part) { //connect two adjacent wires
@@ -175,30 +177,34 @@ export default class Cell {
         // newPart.draw()
 
         // iterate through possible directions
-        for (let i=-1; i<2; i++) {
-            for (let j=-1; j<2; j++) {
-                if ((i !== 0) || (j !== 0)) { // don't include the center
-                    try {
-                        let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)]
-                        if ((part instanceof Wire) || (part instanceof Component)){ //if adjacent objects are a wire
-                            newPart.connect(part) // connect this wire with adjacent wires
-                            part.render() //render adjacent wires again
-                            if (part instanceof Component) {
-                                part.refresh();
-                            }
-                            // newPart.render()
+        let list = [this.matrix[Math.abs(this.y)][Math.abs(this.x + 1)], this.matrix[Math.abs(this.y)][Math.abs(this.x - 1)], this.matrix[Math.abs(this.y + 1)][Math.abs(this.x)], this.matrix[Math.abs(this.y - 1)][Math.abs(this.x)]]
+        for(let i=0; i<4; i++) {
+                let part = list[i];
+                try {
+                    if ((part instanceof Wire) || (part instanceof Component)) { //if adjacent objects are a wire
+                        newPart.connect(part) // connect this wire with adjacent wires
+                        part.render() //render adjacent wires again
+                        if (part instanceof Component) {
+                            part.refresh();
                         }
-                    } catch(err) {
-                        console.log('issue happening in onClick')
+                        // newPart.render()
                     }
+                } catch (err) {
+                    console.log('issue happening in onClick')
                 }
-            }
         }
         newPart.draw()
         newPart.render(); //draw wire
         newPart.rerender();
 
         delete this // delete the original cell object
+    }
+
+    onHover() {
+        // if (this.mouseDown) {
+        //     this.makePart('Wire')
+        //     console.log('hi')
+        // }
     }
 }
 
@@ -361,8 +367,8 @@ export class Component extends Cell {
          * render the text object that displays the value of the resistor
          */
         this.text = new PIXI.Text(this.value.toString() + ' ' + this.unit, {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
-        this.text.x = this.xpixels + (this.dimension/2 - this.text.width/2);
-        this.text.y = this.ypixels - this.dimension/4
+        this.text.x = this.xpixels + (this.dimension*16/15)
+        this.text.y = this.ypixels + this.dimension*2/5
         this.app.stage.addChild(this.text)
 
         this.text.interactive = true;

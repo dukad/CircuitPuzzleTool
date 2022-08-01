@@ -1,4 +1,5 @@
 import Cell from './cell.js';
+import Button from "./button.js";
 
 document.body.style.backgroundColor = 'silver';
 // create a new pixi application, all things inside the application must fit within this window
@@ -17,7 +18,7 @@ app.resize();
 document.body.appendChild(app.view)
 
 // constants
-const cell_dimension = 45
+const cell_dimension = 30
 let r_height = (window.innerHeight % cell_dimension)
 let r_width = ((window.innerWidth % cell_dimension))
 const grid_height = ((window.innerHeight - r_height)/ cell_dimension)
@@ -42,7 +43,25 @@ for (let i = 0; i < grid_height; i++) {
     }
 }
 //
-// let text = new PIXI.Text('this is a test',{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
-// text.x = 200;
-// text.y = 200;
-// app.stage.addChild(text)
+// let testvar = '';
+//
+// window.addEventListener(
+//     "keydown",
+//     function(event) {MyFunction(event.key)}
+// )
+//
+// function MyFunction (the_Key) {
+//     testvar += the_Key
+//     alert("Key pressed is: "+testvar);
+// }
+//
+
+let testButton = new Button(window.innerWidth - 130, window.innerHeight - 80, 100, 50, app)
+testButton.draw()
+
+// let graph = new PIXI.Graphics
+//
+// graph.beginFill(0x04b504)
+// graph.drawRect(this.locationx, this.locationy, this.sizex, this.sizey)
+// graph.endFill()
+// graph.addChild(this.graphic)
