@@ -1,7 +1,4 @@
-import Cell, { Resistor, VoltageSource } from './src/cell.js';
-// import {VoltageSource} from "./src/component";
-// import { Resistor } from './src/component.js';
-// import Wire from './src/wire.js';
+import Cell from './cell.js';
 
 document.body.style.backgroundColor = 'silver';
 // create a new pixi application, all things inside the application must fit within this window
@@ -45,3 +42,8 @@ for (let i = 0; i < grid_height; i++) {
         // console.log(newCell.x, newCell.y, j, i)
     }
 }
+//
+// let text = new PIXI.Text('this is a test',{fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
+// text.x = 200;
+// text.y = 200;
+// app.stage.addChild(text)
