@@ -16,6 +16,7 @@ export default class Cell {
         this.connected_parts = new Set();
         this.graphic.on('mouseover', () => this.onHover());
         this.type = 'Cell'
+        this.text = new PIXI.Text('', {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
     }
 
     connect(part) { //connect two adjacent wires
@@ -196,8 +197,16 @@ export default class Cell {
         newPart.draw()
         newPart.render(); //draw wire
         newPart.rerender();
+        console.log('made a ', part, 'at', newPart.x, newPart.y)
+        newPart.connected_parts.forEach(cn => {
+            console.log('connected to', cn.x, cn.y)
+        })
+        this.connected_parts.forEach(cl => {
+            this.disconnect(cl)
+        })
 
         delete this // delete the original cell object
+
     }
 
     onHover() {
@@ -304,7 +313,7 @@ export class Component extends Cell {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.orientation = null;
         this.unit = ''
-        this.text = null;
+        // this.text = null;
         this.type = 'Component'
     }
 
@@ -368,6 +377,7 @@ export class Component extends Cell {
         /**
          * render the text object that displays the value of the resistor
          */
+        this.text.destroy()
         this.text = new PIXI.Text(this.value.toString() + ' ' + this.unit, {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
         this.text.x = this.xpixels + (this.dimension*16/15)
         this.text.y = this.ypixels + this.dimension*2/5
@@ -379,7 +389,7 @@ export class Component extends Cell {
     }
 
     onTextClick() {
-        console.log('hi')
+        console.log('clicking text')
     }
 
 }
@@ -463,7 +473,7 @@ export class VoltageSource extends Component {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'V';
-        this.text = null;
+        // this.text = null;
     }
 
     render() {
@@ -538,7 +548,7 @@ export class CurrentSource extends Component {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'A';
-        this.text = null;
+        // this.text = null;
     }
 
     render() {

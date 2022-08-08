@@ -114,6 +114,10 @@ export default class NodeVoltage {
         if (node.connected_parts.size >= 3) {
             nodes_set.add(node)
             console.log('found a node at ', node.x, node.y)
+            console.log('the parts it is connected to are: ')
+            node.connected_parts.forEach(cn => {
+                console.log(cn.x, cn.y, cn.type)
+            })
         }
         node.connected_parts.forEach(connected_cell => {
             //if not already seen
