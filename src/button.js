@@ -1,12 +1,13 @@
 import NodeVoltage from "./NodeVoltage.js";
 
 export default class Button {
-    constructor(locationx, locationy, sizex, sizey, app) {
+    constructor(locationx, locationy, sizex, sizey, app, matrix) {
         this.locationx = locationx
         this.locationy = locationy
         this.sizex = sizex
         this.sizey = sizey
         this.app = app
+        this.matrix = matrix
         console.log('constructor running')
         this.graphic = new PIXI.Graphics
         this.text = null
@@ -31,7 +32,7 @@ export default class Button {
     }
 
     onClick() {
-        let test = new NodeVoltage()
+        let test = new NodeVoltage(this.matrix)
         test.solve()
     }
 }

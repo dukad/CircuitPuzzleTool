@@ -15,7 +15,7 @@ export default class Cell {
         this.matrix = matrix; //external matrix of the cell
         this.connected_parts = new Set();
         this.graphic.on('mouseover', () => this.onHover());
-
+        this.type = 'Cell'
     }
 
     connect(part) { //connect two adjacent wires
@@ -91,7 +91,7 @@ export default class Cell {
          * draws the cell that backgrounds the components
          */
         this.graphic.clear() // destroy any current lines draw on
-        this.graphic.lineStyle(2, 0x1f1f1f, 1) // set lines which border cells and become the grid
+        this.graphic.lineStyle(2, 0x2f2f2f, 1) // set lines which border cells and become the grid
         this.graphic.beginFill(0x000000) //fill with black
         this.graphic.drawRect(this.xpixels, this.ypixels, this.dimension, this.dimension) //create square
         this.graphic.endFill()
@@ -190,7 +190,7 @@ export default class Cell {
                         // newPart.render()
                     }
                 } catch (err) {
-                    console.log('issue happening in onClick')
+                    // console.log('issue happening in onClick')
                 }
         }
         newPart.draw()
@@ -221,6 +221,7 @@ export class Wire extends Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.display_directions = new Set();
+        this.type = 'Wire'
     }
 
     display_orient(direction) {
@@ -259,11 +260,11 @@ export class Wire extends Cell {
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
             this.create_node(this.dimension / 4); // create a big node
         } else {
-            this.create_node(this.dimension / 20); //create a small node
+            this.create_node(this.dimension / 15); //create a small node
         }
         this.draw_a_wire();
         // console.log(this.x, this.y, this.display_directions, this.connected_parts.size)
-        console.log(this.connected_parts);
+        // console.log(this.connected_parts);
     }
 
     draw_a_wire() {
@@ -304,6 +305,7 @@ export class Component extends Cell {
         this.orientation = null;
         this.unit = ''
         this.text = null;
+        this.type = 'Component'
     }
 
     display_orient(direction) {

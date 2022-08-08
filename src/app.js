@@ -56,8 +56,9 @@ for (let i = 0; i < grid_height; i++) {
 //     alert("Key pressed is: "+testvar);
 // }
 //
-
-let testButton = new Button(window.innerWidth - 130, window.innerHeight - 80, 100, 50, app)
+// let test = prompt('enter your name')
+// cell[5][5].makePart('Wire')
+let testButton = new Button(window.innerWidth - 130, window.innerHeight - 80, 100, 50, app, cell)
 testButton.draw()
 
 // let graph = new PIXI.Graphics
