@@ -1,7 +1,7 @@
 // import Wire from './wire.js';
-
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
+
         this.graphic = new PIXI.Graphics; //Container for the graphics of each cell
         this.drawingGraphic = new PIXI.Graphics;
         this.app = app; //pixi application
@@ -16,6 +16,16 @@ export default class Cell {
         this.ypixels = this.y * this.dimension;
         this.matrix = matrix; //external matrix of the cell
         this.connected_parts = new Set();
+
+
+
+
+
+        this.top = null;
+        this.bottom = null;
+        this.right = null;
+        this.left = null;
+
     }
 
     connect(part) { //connect two adjacent wires
@@ -32,14 +42,16 @@ export default class Cell {
 
     }
 
+
+
     display_orient(direction) {
         //this function does nothing unless overridden by a subclass
     }
 
     disconnect(part) {
         /**
-         * disconnects two parts from each other
-         * @param {Wire, Component} part connected part meant to be disconnected
+             * disconnects two parts from each other
+             * @param {Wire, Component} part connected part meant to be disconnected
          */
         this.connected_parts.delete(part);
         part.connected_parts.delete(this);
@@ -90,7 +102,6 @@ export default class Cell {
         /**
          * draws the cell that backgrounds the components
          */
-        this.graphic.clear() // destroy any current lines draw on
         this.graphic.lineStyle(2, 0x1f1f1f, 1) // set lines which border cells and become the grid
         this.graphic.beginFill(0x000000) //fill with black
         this.graphic.drawRect(this.xpixels, this.ypixels, this.dimension, this.dimension) //create square
@@ -115,6 +126,8 @@ export default class Cell {
         // console.log('onClick running')
     }
 
+
+
     onRightClick() {
         /**
          * onClick method for all cells, wires, and components
@@ -122,7 +135,7 @@ export default class Cell {
         if(this instanceof Resistor) {
             this.makePart('VoltageSource');
         } else {
-            this.makePart('Resistor')
+            this.makePart('Resistor');
         }
         // console.log('onClick running')
     }
@@ -130,7 +143,7 @@ export default class Cell {
     rerender() {
         /**
          * rerender surrounding parts ensuring everything is up to date
-         */
+         *//*
         for (let i=-1; i<2; i++) { // iterate through possible directions
             for (let j=-1; j<2; j++) {
                 if ((i !== 0) || (j !== 0)) { // don't include the center
@@ -140,7 +153,21 @@ export default class Cell {
                         }
                     }
                 }
-            }
+            }*/
+        if((this.top instanceof Wire) || (this.top instanceof Component) ){
+            this.top.render();
+        }
+
+        if((this.bottom instanceof Wire) || (this.bottom instanceof Component) ){
+            this.bottom.render();
+        }
+        if((this.right instanceof Wire) || (this.right instanceof Component) ){
+            this.right.render();
+        }
+        if((this.left instanceof Wire) || (this.left instanceof Component) ){
+            this.left.render();
+        }
+
 
         }
 
@@ -149,6 +176,8 @@ export default class Cell {
         /**
          * forms a new part in place of whatever was currently present
          */
+        //console.log(this.x, this.y, this.top.x, this.top.y)
+
         if ((this instanceof Wire) || (this instanceof Component)) {
             this.drawingGraphic.clear()
         }
@@ -169,8 +198,34 @@ export default class Cell {
         this.matrix[this.y][this.x] = newPart; // set the matrix coordinates to the new object
         // newPart.draw()
 
+        newPart.top = this.top;
+        newPart.bottom = this.bottom;
+        newPart.left = this.left;
+        newPart.right = this.right;
+       //update parts connections
+
+        if(this.top !== null){
+            console.log('update bottom running')
+            this.top.updateBottom(newPart);
+        }
+
+        if(this.bottom !== null){
+            this.bottom.updateTop(newPart);
+        }
+
+        if(this.right !== null){
+            this.right.updateLeft(newPart);
+        }
+
+        if(this.left !== null){
+            this.left.updateRight(newPart);
+        }
+
+
+
+
         // iterate through possible directions
-        for (let i=-1; i<2; i++) {
+       /* for (let i=-1; i<2; i++) {
             for (let j=-1; j<2; j++) {
                 if ((i !== 0) || (j !== 0)) { // don't include the center
                     try {
@@ -188,14 +243,77 @@ export default class Cell {
                     }
                 }
             }
+        }*/
+
+
+        if((this.top instanceof Wire) || (this.top instanceof Component)) {
+            newPart.connect(this.top);
+            this.top.render();
+
+
+            if (this.top instanceof Component) {
+                this.top.refresh();
+
+            }
         }
+            if((this.bottom instanceof Wire) || (this.bottom instanceof Component)) {
+                newPart.connect(this.bottom);
+                this.bottom.render();
+
+                if (this.bottom instanceof Component) {
+                    this.bottom.refresh();
+
+                }
+            }
+
+        if((this.right instanceof Wire) || (this.right instanceof Component)) {
+            newPart.connect(this.right);
+            this.right.render();
+
+            if (this.right instanceof Component) {
+                this.right.refresh();
+
+            }
+        }
+
+        if((this.left instanceof Wire) || (this.left instanceof Component)) {
+            newPart.connect(this.left);
+            this.left.render();
+
+            if (this.left instanceof Component) {
+                this.left.refresh();
+
+            }
+        }
+
+
         newPart.draw()
         newPart.render(); //draw wire
         newPart.rerender();
 
         delete this // delete the original cell object
     }
+
+    updateBottom(part){
+        this.bottom = part;
+
+    }
+
+    updateTop(part){
+        this.top = part;
+    }
+
+    updateLeft(part){
+        this.left = part;
+
+    }
+
+    updateRight(part){
+        this.right = part;
+    }
 }
+
+
 
 
 export class Wire extends Cell {
