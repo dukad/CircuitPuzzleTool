@@ -1,4 +1,5 @@
-import Cell, {Wire} from 'cell.js';
+import Cell from "./cell.js";
+import Wire from "./wire.js";
 
 export default class Component extends Cell {
     /**
