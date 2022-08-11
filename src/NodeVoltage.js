@@ -1,4 +1,10 @@
-import Cell, { Resistor, VoltageSource, CurrentSource } from "./cell.js";
+import Cell, { Resistor, VoltageSource, CurrentSource, Component } from "./cell.js";
+import NetItem from "./NetItem.js";
+import Reference from "./Reference.js";
+
+//global var
+let netnum;
+let referenceNum;
 
 export default class NodeVoltage {
     constructor(matrix) {
@@ -7,7 +13,7 @@ export default class NodeVoltage {
     }
 
     solve() {
-        console.log('solving')
+        // console.log('solving')
         //find a wire on the matrix
         let part = this.find_a_part()
         if (!(part instanceof Cell)) {
@@ -16,19 +22,29 @@ export default class NodeVoltage {
         }
         //get a list of all significant nodes
         let nodes = this.find_all_nodes(part)
-        //if the list has no items
-            // start at this.cell, designated ground before the voltage source
-            //find the total resistance of the circuit,
-            //find the total voltage gain of the circuit
-            //use these to find the current through the total circuit
-        //if the list has items (one item shouldn't be possible I believe)
-            //find the node with the greatest / lowest y coordinate, designate it as ground possible adding a visual
-            //iterate through each other node
-                // progress through each available path until reaching another node or ending
-                    // if you encounter a component, add it to a list for the node
-                    //sum necessary voltages, resistors, and currents to form the proper equation for the node
-            //use system of equations to solve
+        nodes.forEach(node => {
+            node.reference = null
+        })
 
+        // Create a net list to be solved using PySpice
+        let list = this.create_net_list(nodes)
+        // console.log(list.length)
+
+        const fs = req('fs')
+
+// Data which will write in a file.
+        let data = "Learning how to write in a file."
+
+// Write data in 'Output.txt' .
+        fs.writeln('Output.txt', data, (err) => {
+            if (err) throw err;
+        })
+
+        for (let i = 0; i< list.length; i++) {
+            list[i].create_string()
+            console.log(list[i].string)
+
+        }
     }
 
     find_a_part() {
@@ -54,7 +70,7 @@ export default class NodeVoltage {
         //starting with any cell
             //if the number of directions possible is 1 or 2, go until finding a node
             // if the number is 3 or >3, you're already there
-        console.log('running find_all_nodes method')
+        // console.log('running find_all_nodes method')
         let current_cell = part
         let seen = new Set()
         let value = current_cell.connected_parts.size
@@ -87,7 +103,7 @@ export default class NodeVoltage {
                 value = 3 // break the while loop
             }
         }
-        alert('Successfully exited while loop')
+        // alert('Successfully exited while loop')
         //now current_cell is a node if nodes are present
         // if no node was found, there are no nodes, return an empty Set
         if (current_cell.connected_parts.size < 3) {
@@ -96,7 +112,7 @@ export default class NodeVoltage {
         } else {
             seen.clear()
             let x = this.node_search(current_cell, seen)
-            console.log(x.size, ' nodes found')
+            // console.log(x.size, ' nodes found')
             return x
         }
     }
@@ -109,15 +125,15 @@ export default class NodeVoltage {
         //     console.log('running node search method')
         //start at a node
         //for each surrounding direction
-        console.log('node searching ', node.x, node.y)
+        // console.log('node searching ', node.x, node.y)
         seen_set.add(node)
         if (node.connected_parts.size >= 3) {
             nodes_set.add(node)
-            console.log('found a node at ', node.x, node.y)
-            console.log('the parts it is connected to are: ')
-            node.connected_parts.forEach(cn => {
-                console.log(cn.x, cn.y, cn.type)
-            })
+            // console.log('found a node at ', node.x, node.y)
+            // console.log('the parts it is connected to are: ')
+            // node.connected_parts.forEach(cn => {
+            //     console.log(cn.x, cn.y, cn.type)
+            // })
         }
         node.connected_parts.forEach(connected_cell => {
             //if not already seen
@@ -126,5 +142,119 @@ export default class NodeVoltage {
             }
         })
         return nodes_set
+    }
+
+    create_net_list(nodes) {
+        // Now with a set of 'significant nodes' we must create a net list, however, the way net list references nodes
+        // are different than the way we do: there also must be nodes in between any series connected components so that
+        // we can differentiate parts in series and parallel. To avoid confusion, we will call the net list version of
+        // nodes 'references'
+
+        let seen = new Set()
+        let list = [];
+        referenceNum = 1
+        netnum = 1
+        nodes.forEach(node => {
+            let newList = this.netitems_from_node(node, seen)
+            list = list.concat(newList)
+        })
+        // console.log(list.length)
+        return list
+    }
+
+    netitems_from_node(node, seen) {
+        //takes a node and a seen set and returns a list of netitems (class NetItem) coming from said node
+        seen.add(node)
+        if (!(node.reference instanceof Reference)) {
+            console.log('new ref created')
+            node.reference = new Reference(referenceNum)
+            referenceNum += 1
+        }
+        let prevRef = node.reference
+        let netItems = []
+        node.connected_parts.forEach(direction => {
+            if (!(seen.has(direction))) {
+                let itemList = []
+                // console.log('running direction recurse initially')
+                let nextItem = this.direction_recurse(direction, seen, node)
+                let whileruns = 0
+                while ((nextItem instanceof Component) && (whileruns < 10)) {
+                    whileruns += 1
+                    itemList.push(nextItem)
+                    nextItem.connected_parts.forEach(connected => {
+                        // console.log(connected.x, connected.y)
+                        if (!(seen.has(connected))) {
+                            nextItem = this.direction_recurse(connected, seen, node)
+                        } else if ((connected.connected_parts.size >= 3) && (connected !== node)) {
+                            // console.log('running else if')
+                            nextItem = connected
+                        }
+
+                    })
+                }
+                // console.log('exited while')
+                // console.log(itemList.length)
+                //now itemList should contain all the list of components in a direction and nextItem should be the connected node
+                if (itemList.size === 0) {
+                    alert('hey add something that does something here')
+                }
+                if (nextItem.reference === null) {
+                    console.log('new ref created 2')
+                    nextItem.reference = new Reference(referenceNum)
+                    referenceNum += 1
+                }
+                for (let i = 0; i < itemList.length; i++) {
+                    let netitem = new NetItem(itemList[i], netnum)
+                    netnum += 1
+                    netitem.node1 = prevRef
+
+                    if (i === (itemList.length - 1)) {
+                        netitem.node2 = nextItem.reference
+                    } else {
+                        console.log('new ref created 3')
+                        let inBetween = new Reference(referenceNum)
+                        referenceNum += 1
+                        netitem.node2 = inBetween
+                        prevRef = inBetween
+                    }
+                    netItems.push(netitem)
+                }
+            }
+        })
+        return netItems
+    }
+
+    direction_recurse(direction, seen, node) {
+        /**
+         * called in a direction of a node/wire and returns the next appearing component or node
+         */
+        // console.log('direction recursing at', direction.x, direction.y)
+        seen.add(direction)
+        if ((direction instanceof Component) || (direction.connected_parts.size >= 3)) {
+            // console.log('im a component or a node!')
+            // console.log('returning', direction.x, direction.y)
+            return direction
+        } else {
+            let array = []
+            direction.connected_parts.forEach(cd => {
+                array.push(cd)
+            })
+            for (let i=0; i < array.length; i++) {
+                if (!(seen.has(array[i]))) { // if the connected direction hasn't been seen
+                    // console.log('i havent yet seen', array[i].x, array[i].y)
+                    let recursive = this.direction_recurse(array[i], seen, node) // recursively call the function on that cell
+                    // console.log('successfully recursed back to', direction.x, direction.y)
+                    // console.log(recursive.type)
+                    // console.log('returning', recursive.x, recursive.y, 'after running', direction.x, direction.y, 'and iterating by', array[i].x, array[i].y)
+                    return recursive // return whatever is returned by said cell
+                } else if (((array[i].connected_parts.size >= 3)) && (array[i] !== node)) {
+                    // console.log('ive already seen', array[i].x, array[i].y, 'but its a node')
+                    return array[i]
+                } else {
+                    // console.log('failed all if statements when at direction', direction.x, direction.y, 'iterating at', array[i].x, array[i].y)
+                }
+            }
+        }
+        alert('somehow returning nothing')
     }
 }

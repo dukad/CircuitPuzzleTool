@@ -17,6 +17,7 @@ export default class Cell {
         this.graphic.on('mouseover', () => this.onHover());
         this.type = 'Cell'
         this.text = new PIXI.Text('', {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
+        this.reference = null
     }
 
     connect(part) { //connect two adjacent wires
@@ -197,10 +198,10 @@ export default class Cell {
         newPart.draw()
         newPart.render(); //draw wire
         newPart.rerender();
-        console.log('made a ', part, 'at', newPart.x, newPart.y)
-        newPart.connected_parts.forEach(cn => {
-            console.log('connected to', cn.x, cn.y)
-        })
+        // console.log('made a ', part, 'at', newPart.x, newPart.y)
+        // newPart.connected_parts.forEach(cn => {
+        //     console.log('connected to', cn.x, cn.y)
+        // })
         this.connected_parts.forEach(cl => {
             this.disconnect(cl)
         })
@@ -359,7 +360,7 @@ export class Component extends Cell {
                         let dir = this.find_direction(part)
                         if((dir === this.orientation) || (this.reverse_direction(dir) === this.orientation)) {
                             this.connect(part)
-                            console.log('connected in refresh')
+                            // console.log('connected in refresh')
                         } else {
                             this.disconnect(part) // connect this wire with adjacent wires
                         }
@@ -408,6 +409,7 @@ export class Resistor extends Component {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'Ω';
+        this.abbr = 'R'
     }
 
     render() {
@@ -473,6 +475,7 @@ export class VoltageSource extends Component {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'V';
+        this.abbr = 'V'
         // this.text = null;
     }
 
@@ -548,6 +551,7 @@ export class CurrentSource extends Component {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'A';
+        this.abbr = 'I'
         // this.text = null;
     }
 

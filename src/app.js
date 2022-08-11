@@ -58,7 +58,7 @@ for (let i = 0; i < grid_height; i++) {
 //
 // let test = prompt('enter your name')
 // cell[5][5].makePart('Wire')
-let testButton = new Button(window.innerWidth - 130, window.innerHeight - 80, 100, 50, app, cell)
+let testButton = new Button(10, window.innerHeight - 80, 100, 50, app, cell)
 testButton.draw()
 
 // let graph = new PIXI.Graphics
