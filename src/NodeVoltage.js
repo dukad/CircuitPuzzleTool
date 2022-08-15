@@ -1,6 +1,7 @@
 import Cell, { Resistor, VoltageSource, CurrentSource, Component } from "./cell.js";
 import NetItem from "./NetItem.js";
 import Reference from "./Reference.js";
+import SendToPython from "./SendToPython.js";
 
 //global var
 let netnum;
@@ -30,21 +31,16 @@ export default class NodeVoltage {
         let list = this.create_net_list(nodes)
         // console.log(list.length)
 
-        const fs = req('fs')
+        let string = ''
 
-// Data which will write in a file.
-        let data = "Learning how to write in a file."
-
-// Write data in 'Output.txt' .
-        fs.writeln('Output.txt', data, (err) => {
-            if (err) throw err;
-        })
-
-        for (let i = 0; i< list.length; i++) {
+        for(let i = 0; i <list.length ; i++) {
             list[i].create_string()
-            console.log(list[i].string)
-
+            string += list[i].string + '\n'
         }
+
+            console.log(string)
+
+        SendToPython('netlistsolve.py', string)
     }
 
     find_a_part() {
