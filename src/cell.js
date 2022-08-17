@@ -148,7 +148,21 @@ export default class Cell {
         /**
          * rerender surrounding parts ensuring everything is up to date
          */
-        for (let i=-1; i<2; i++) { // iterate through possible directions
+
+        if((this.top instanceof Wire) || (this.top instanceof Component) ){
+            this.top.render();
+        }
+
+        if((this.bottom instanceof Wire) || (this.bottom instanceof Component) ){
+            this.bottom.render();
+        }
+        if((this.right instanceof Wire) || (this.right instanceof Component) ){
+            this.right.render();
+        }
+        if((this.left instanceof Wire) || (this.left instanceof Component) ){
+            this.left.render();
+        }
+       /* for (let i=-1; i<2; i++) { // iterate through possible directions
             for (let j=-1; j<2; j++) {
                 if ((i !== 0) || (j !== 0)) { // don't include the center
                     let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)];
@@ -157,15 +171,110 @@ export default class Cell {
                         }
                     }
                 }
-            }
+            }*/
 
         }
 
 
     makePart(part) {
+
         /**
          * forms a new part in place of whatever was currently present
          */
+        //console.log(this.x, this.y, this.top.x, this.top.y)
+
+        if ((this instanceof Wire) || (this instanceof Component)) {
+            this.drawingGraphic.clear()
+        }
+
+        let newPart;
+        if(part === 'Wire') {
+            newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix, this.board); // new wire object with same properties as the cell
+        }
+        else if(part === 'Resistor') {
+            newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
+        }
+        else if(part === 'VoltageSource') {
+            newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
+        }
+        else {
+            alert('Input non valid circuit part')
+        }
+        this.matrix[this.y][this.x] = newPart; // set the matrix coordinates to the new object
+        // newPart.draw()
+
+        newPart.top = this.top;
+        newPart.bottom = this.bottom;
+        newPart.left = this.left;
+        newPart.right = this.right;
+        //update parts connections
+
+        if(this.top !== null){
+            console.log('update bottom running')
+            this.top.updateBottom(newPart);
+        }
+
+        if(this.bottom !== null){
+            this.bottom.updateTop(newPart);
+        }
+
+        if(this.right !== null){
+            this.right.updateLeft(newPart);
+        }
+
+        if(this.left !== null){
+            this.left.updateRight(newPart);
+        }
+        if((this.top instanceof Wire) || (this.top instanceof Component)) {
+            newPart.connect(this.top);
+            this.top.render();
+
+
+            if (this.top instanceof Component) {
+                this.top.refresh();
+
+            }
+        }
+        if((this.bottom instanceof Wire) || (this.bottom instanceof Component)) {
+            newPart.connect(this.bottom);
+            this.bottom.render();
+
+            if (this.bottom instanceof Component) {
+                this.bottom.refresh();
+
+            }
+        }
+
+        if((this.right instanceof Wire) || (this.right instanceof Component)) {
+            newPart.connect(this.right);
+            this.right.render();
+
+            if (this.right instanceof Component) {
+                this.right.refresh();
+
+            }
+        }
+
+        if((this.left instanceof Wire) || (this.left instanceof Component)) {
+            newPart.connect(this.left);
+            this.left.render();
+
+            if (this.left instanceof Component) {
+                this.left.refresh();
+
+            }
+        }
+
+
+        newPart.draw()
+        newPart.render(); //draw wire
+        newPart.rerender();
+
+        delete this // delete the original cell object
+
+      /*  /!**
+         * forms a new part in place of whatever was currently present
+         *!/
         if ((this instanceof Wire) || (this instanceof Component)) {
             this.drawingGraphic.clear()
         }
@@ -220,9 +329,11 @@ export default class Cell {
             this.disconnect(cl)
         })
 
-        delete this // delete the original cell object
+        delete this // delete the original cell object*/
 
     }
+
+
 
     onHover() {
         // if (this.mouseDown) {
@@ -239,7 +350,7 @@ export default class Cell {
         }
 
         if(this.board.wire === true){
-            this.bottom.makePart('Wire')
+            this.makePart('Wire')
             this.board.wire = false;
         }
         if(this.board.voltage === true){
@@ -247,6 +358,24 @@ export default class Cell {
             this.board.voltage = false;
 
         }
+    }
+
+    updateBottom(part){
+        this.bottom = part;
+
+    }
+
+    updateTop(part){
+        this.top = part;
+    }
+
+    updateLeft(part){
+        this.left = part;
+
+    }
+
+    updateRight(part){
+        this.right = part;
     }
 }
 
@@ -504,7 +633,7 @@ export class VoltageSource extends Component {
      * @param value
      */
     constructor(x_coordinate, y_coordinate, dimension, app, matrix, value, board) {
-        super(x_coordinate, y_coordinate, dimension, app, matrix);
+        super(x_coordinate, y_coordinate, dimension, app, matrix, board);
         this.value = value;
         this.unit = 'V';
         this.abbr = 'V'

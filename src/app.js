@@ -95,7 +95,15 @@ class Board {
             }
         }
     }
+    drawBar(){
+        const bar = new PIXI.Graphics();
+        bar.beginFill(0x808080)
+        bar.drawRect(20, 40 , 50, 120)
+        bar.endFill();
 
+        app.stage.addChild(bar);
+
+    }
     makeFakeResistor(){
         //this.resistor = false;
 
@@ -259,6 +267,8 @@ console.log(grid_width)
 let game = new Board(grid_height, grid_width, cell_dimension);
 game.initBoard(grid_height, grid_width, cell_dimension);
 game.connectCells();
+game.drawBar();
+
 game.makeFakeResistor();
 game.makeFakeVoltage();
 game.makeFakeWire();
@@ -274,7 +284,7 @@ function onDragStartR(event)
     // the reason for this is because of multitouch
     // we want to track the movement of this particular touch
     this.data = event.data;
-    this.alpha = .5;
+    this.alpha = 0;
     this.dragging = true;
     game.fakeResistor.data = event.data;
     game.resistor = true;
@@ -288,7 +298,7 @@ function onDragEndR()
 
 
 
-    this.alpha = .5;
+    this.alpha = 0;
 
     this.dragging = false;
 
@@ -313,7 +323,7 @@ function onDragMoveR()
 {
     if (this.dragging)
     {
-        this.alpha =.5;
+        this.alpha =0;
         var newPosition = this.data.getLocalPosition(this.parent);
         this.position.x = newPosition.x-50;
         this.position.y = newPosition.y-50;
@@ -331,7 +341,7 @@ function onDragStartV(event)
     // the reason for this is because of multitouch
     // we want to track the movement of this particular touch
     this.data = event.data;
-    this.alpha = .5;
+    this.alpha = 0;
     this.dragging = true;
     game.fakeVoltage.data = event.data;
     game.voltage = true;
@@ -340,7 +350,7 @@ function onDragStartV(event)
 
 function onDragEndV()
 {
-    this.alpha = .5;
+    this.alpha = 0;
 
     this.dragging = false;
 
@@ -360,7 +370,7 @@ function onDragMoveV()
 {
     if (this.dragging)
     {
-        this.alpha =.5;
+        this.alpha =0;
         var newPosition = this.data.getLocalPosition(this.parent);
         this.position.x = newPosition.x-50;
         this.position.y = newPosition.y-80;
@@ -416,15 +426,6 @@ function onDragMoveW()
 
     }
 }
-
-
-
-
-
-
-
-
-
 game.fakeResistor.rectangle.on('mousedown', onDragStartR);
 game.fakeResistor.rectangle.on('mouseup', onDragEndR);
 game.fakeResistor.rectangle.on('mousemove', onDragMoveR);
@@ -433,7 +434,6 @@ game.fakeResistor.rectangle.on('mouseupoutside', onDragEndR);
 game.fakeResistor.rectangle.on('touchend', onDragEndR);
 game.fakeResistor.rectangle.on('touchendoutside', onDragEndR);
 game.fakeResistor.rectangle.on('touchmove', onDragMoveR);
-
 
 game.fakeVoltage.rectangle.on('mousedown', onDragStartV);
 game.fakeVoltage.rectangle.on('mouseup', onDragEndV);
