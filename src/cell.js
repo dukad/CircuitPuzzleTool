@@ -1,5 +1,5 @@
 export default class Cell {
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
         this.graphic = new PIXI.Graphics; //Container for the graphics of each cell
         this.drawingGraphic = new PIXI.Graphics;
         this.app = app; //pixi application
@@ -10,6 +10,11 @@ export default class Cell {
         this.graphic.buttonMode = true;
         this.graphic.on('click', () => this.onClick()) //run the onClick method when clicked
         this.graphic.on('rightdown', () => this.onRightClick());
+        this.graphic.on('mouseup', () => this.onMouseUp())
+        this.graphic.on('touchend', () => this.onMouseUp())
+        this.graphic.on('touchendoutside', () => this.onMouseUp())
+        this.graphic.on('mouseupoutside', () => this.onMouseUp())
+
         this.xpixels = this.x * this.dimension; // pixel coordinates of the cell
         this.ypixels = this.y * this.dimension;
         this.matrix = matrix; //external matrix of the cell
@@ -18,6 +23,15 @@ export default class Cell {
         this.type = 'Cell'
         this.text = new PIXI.Text('', {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
         this.reference = null
+        this.board = board;
+
+        this.top = null;
+        this.bottom = null;
+        this.right = null;
+        this.left = null;
+
+
+
     }
 
     connect(part) { //connect two adjacent wires
@@ -161,16 +175,16 @@ export default class Cell {
 
         let newPart;
         if(part === 'Wire') {
-            newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix); // new wire object with same properties as the cell
+            newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix, this.board); // new wire object with same properties as the cell
         }
         else if(part === 'Resistor') {
-            newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15);
+            newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
         }
         else if(part === 'VoltageSource') {
-            newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15);
+            newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
         }
         else if(part === 'CurrentSource') {
-            newPart = new CurrentSource(this.x, this.y, this.dimension, this.app, this.matrix, 15)
+            newPart = new CurrentSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board)
         }
         else {
             alert('Input non valid circuit part')
@@ -216,6 +230,24 @@ export default class Cell {
         //     console.log('hi')
         // }
     }
+
+    onMouseUp(){
+        if(this.board.resistor === true){
+            this.bottom.makePart('Resistor')
+            this.board.resistor = false;
+
+        }
+
+        if(this.board.wire === true){
+            this.bottom.makePart('Wire')
+            this.board.wire = false;
+        }
+        if(this.board.voltage === true){
+            this.bottom.makePart('VoltageSource')
+            this.board.voltage = false;
+
+        }
+    }
 }
 
 
@@ -228,8 +260,8 @@ export class Wire extends Cell {
      * @param app PIXI application
      * @param matrix matrix holding the cell
      */
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
-        super(x_coordinate, y_coordinate, dimension, app, matrix);
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
+        super(x_coordinate, y_coordinate, dimension, app, matrix, board);
         this.display_directions = new Set();
         this.type = 'Wire'
     }
@@ -310,8 +342,8 @@ export class Component extends Cell {
      * @param app
      * @param matrix
      */
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix) {
-        super(x_coordinate, y_coordinate, dimension, app, matrix);
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
+        super(x_coordinate, y_coordinate, dimension, app, matrix, board);
         this.orientation = null;
         this.unit = ''
         // this.text = null;
@@ -405,8 +437,8 @@ export class Resistor extends Component {
      * @param matrix
      * @param value
      */
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value) {
-        super(x_coordinate, y_coordinate, dimension, app, matrix);
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value, board) {
+        super(x_coordinate, y_coordinate, dimension, app, matrix, board);
         this.value = value;
         this.unit = 'Ω';
         this.abbr = 'R'
@@ -471,7 +503,7 @@ export class VoltageSource extends Component {
      * @param matrix
      * @param value
      */
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value) {
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value, board) {
         super(x_coordinate, y_coordinate, dimension, app, matrix);
         this.value = value;
         this.unit = 'V';
@@ -547,8 +579,8 @@ export class CurrentSource extends Component {
      * @param matrix
      * @param value
      */
-    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value) {
-        super(x_coordinate, y_coordinate, dimension, app, matrix);
+    constructor(x_coordinate, y_coordinate, dimension, app, matrix, value, board) {
+        super(x_coordinate, y_coordinate, dimension, app, matrix, board);
         this.value = value;
         this.unit = 'A';
         this.abbr = 'I'

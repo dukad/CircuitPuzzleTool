@@ -1,4 +1,4 @@
-import Cell from './cell.js';
+import Cell, {Resistor, VoltageSource, Wire} from './cell.js';
 import Button from "./button.js";
 
 document.body.style.backgroundColor = 'silver';
@@ -26,38 +26,435 @@ const grid_height = ((window.innerHeight - r_height)/ cell_dimension)
 const grid_width = ((window.innerWidth - r_width) / cell_dimension)
 let cell = [];
 
-console.log(grid_height)
-console.log(grid_width)
 
-//fill up the 1D array with empty arrays to make it 2 dimensional
-for (let i = 0; i < grid_height; i++) {
-    cell[i] = []
-}
+class Board {
+
+    constructor(grid_height, grid_width, cell_dimension) {
+        this.cell = [];
+        this.grid_height = grid_height;
+        this.grid_width = grid_width;
+        this.cell_dimension = cell_dimension;
+        this.fakeResistor = new PIXI.Graphics();
+        this.fakeVoltage  = new PIXI.Graphics();
+        this.fakeWire = new PIXI.Graphics();
+        this.resistor = false;
+       this.voltage = false;
+       this.wire = false;
+
+
+
+
+
+        this.makeFakeResistor();
+        this.makeFakeVoltage();
+        this.makeFakeWire();
+
+    }
+
+    initBoard() {
+        for (let i = 0; i < this.grid_height; i++) {
+
+            this.cell[i] = [];
+        }
 // create a matrix of cells
-for (let i = 0; i < grid_height; i++) {
-    for (let j = 0; j < grid_width; j++)
-    {
-        let newCell = new Cell(j, i, cell_dimension, app, cell)
-        newCell.draw()
-        cell[i][j] = newCell;
-        // console.log(newCell.x, newCell.y, j, i)
+        for (let i = 0; i < this.grid_height; i++) {
+            for (let j = 0; j < this.grid_width; j++) {
+// adding the new cell to the array
+                let newCell = new Cell(j, i, this.cell_dimension, app, this.cell, this)
+                newCell.draw()
+                this.cell[i][j] = newCell;
+
+
+            }
+
+
+        }
+    }
+
+
+    connectCells() {
+        for (let i = 0; i < this.grid_height; i++) {
+            for (let j = 0; j < this.grid_width; j++) {
+
+//this.cell[2][2].top = this.cell[1][2];
+                if (i !== 0) {
+                    this.cell[i][j].top = this.cell[i - 1][j];
+                }
+
+                if (j !== 0) {
+                    this.cell[i][j].left = this.cell[i][j - 1];
+                }
+
+                if (j < this.grid_width - 1) {
+                    this.cell[i][j].right = this.cell[i][j + 1];
+                }
+                if (i < this.grid_height - 1) {
+                    this.cell[i][j].bottom = this.cell[i + 1][j];
+                }
+
+            }
+        }
+    }
+
+    makeFakeResistor(){
+        //this.resistor = false;
+
+        const xPixels = 1 *30;
+        const yPixels = 2 * 30;
+
+        const dimension = 30;
+
+        const x = xPixels;
+        const y = yPixels + dimension/2
+        this.fakeResistor.interactive = true;
+        this.fakeResistor.dragging = false;
+
+        app.stage.addChild(this.fakeResistor);
+        this.fakeResistor.lineStyle(5, 0x04b504)
+
+        this.fakeResistor.moveTo(x, y);
+        this.fakeResistor.lineTo(x+dimension/10, y)
+        this.fakeResistor.lineTo(x+dimension/5, y - dimension/4)
+        this.fakeResistor.lineTo(x+dimension*2/5, y + dimension/4)
+        this.fakeResistor.lineTo(x+dimension*3/5, y - dimension/4)
+        this.fakeResistor.lineTo(x+dimension*4/5, y + dimension/4)
+        this.fakeResistor.lineTo(x+dimension*9/10, y)
+        this.fakeResistor.lineTo(x+dimension, y)
+
+        console.log("x pson " + this.fakeResistor.x);
+        console.log("y posn" + this.fakeResistor.y);
+
+//hitbox
+        this.fakeResistor.rectangle = new PIXI.Graphics();
+        this.fakeResistor.rectangle.beginFill( 0x04b504)
+        this.fakeResistor.rectangle.drawRect(30, 60, 30, 30);
+        this.fakeResistor.rectangle.interactive = true;
+        this.fakeResistor.rectangle.dragging = false;
+        this.fakeResistor.rectangle.alpha = 0;
+
+        this.fakeResistor.rectangle.endFill();
+
+        app.stage.addChild(this.fakeResistor.rectangle);
+
+    }
+
+    makeFakeVoltage(){
+
+        const xPixels = 1 *30;
+        const yPixels = 3 * 30;
+        const dimension = 30;
+
+        let x = xPixels;
+        let y = yPixels + dimension / 2;
+        this.fakeVoltage.moveTo(x, y);
+        this.fakeVoltage.lineTo(x + dimension / 6, y)
+        this.fakeVoltage.moveTo(x + dimension * 5 / 6, y)
+        this.fakeVoltage.lineTo(x + dimension, y)
+        this.fakeVoltage.drawCircle(x + dimension / 2, y, dimension / (3))
+
+        this.fakeVoltage.lineStyle(2, 0x04b504)
+        //draw plus sign
+        this.fakeVoltage.moveTo(x + dimension * 6 / 12, y)
+        this.fakeVoltage.lineTo(x + dimension * 8 / 12, y)
+        this.fakeVoltage.moveTo(x + dimension * 7 / 12, y - dimension * 1 / 12)
+        this.fakeVoltage.lineTo(x + dimension * 7 / 12, y + dimension * 1 / 12)
+        //draw minus sign
+        this.fakeVoltage.moveTo(x + dimension * 5 / 12, y - dimension * 1 / 12)
+        this.fakeVoltage.lineTo(x + dimension * 5 / 12, y + dimension * 1 / 12)
+
+        this.fakeVoltage.lineStyle(5, 0x04b504);
+
+
+            this.fakeVoltage.moveTo(x, y);
+            this.fakeVoltage.lineTo(x - dimension / 4, y);
+            this.fakeVoltage.moveTo(x + dimension, y);
+            this.fakeVoltage.lineTo(x + dimension * 5 / 4, y);
+
+            app.stage.addChild(this.fakeVoltage);
+            //hitbox
+
+
+        this.fakeVoltage.rectangle = new PIXI.Graphics();
+        this.fakeVoltage.rectangle.beginFill( 0x04b504)
+        this.fakeVoltage.rectangle.drawRect(30, 90, 30, 30);
+        console.log("volt " + this.fakeVoltage.x);
+        console.log("volt" + this.fakeVoltage.y);
+
+        this.fakeVoltage.rectangle.interactive = true;
+        this.fakeVoltage.rectangle.dragging = false;
+        this.fakeVoltage.rectangle.alpha = 0;
+
+        this.fakeVoltage.rectangle.endFill();
+
+        app.stage.addChild(this.fakeVoltage.rectangle);
+
+
+
+    }
+
+    makeFakeWire(){
+        this.fakeWire.beginFill(0x04b504);
+        this.fakeWire.drawRect(30, 130, 30, 5)
+        this.fakeWire.drawCircle(30, 132 , 7);
+        this.fakeWire.drawCircle(60, 132 , 7);
+        this.fakeWire.interactive = true;
+        this.fakeWire.dragging = false;
+        this.fakeWire.endFill();
+
+
+
+        app.stage.addChild(this.fakeWire);
+
+
+
+
+
     }
 }
-//
-// let testvar = '';
-//
-// window.addEventListener(
-//     "keydown",
-//     function(event) {MyFunction(event.key)}
-// )
-//
-// function MyFunction (the_Key) {
-//     testvar += the_Key
-//     alert("Key pressed is: "+testvar);
-// }
-//
-// let test = prompt('enter your name')
-// cell[5][5].makePart('Wire')
+
+    /*makeFakeResistor(){
+        const xPixels = 1 *30;
+        const yPixels = 2 * 30;
+
+        const dimension = 30;
+        //const fakeResistor = new PIXI.Graphics();
+        const x = xPixels;
+        const y = yPixels + dimension/2
+        this.fakeResistor.interactive = true;
+        this.fakeResistor.dragging = false;
+
+        app.stage.addChild(this.fakeResistor);
+        this.fakeResistor.lineStyle(5, 0x04b504)
+
+        this.fakeResistor.moveTo(x, y);
+        this.fakeResistor.lineTo(x+dimension/10, y)
+        this.fakeResistor.lineTo(x+dimension/5, y - dimension/4)
+        this.fakeResistor.lineTo(x+dimension*2/5, y + dimension/4)
+        this.fakeResistor.lineTo(x+dimension*3/5, y - dimension/4)
+        this.fakeResistor.lineTo(x+dimension*4/5, y + dimension/4)
+        this.fakeResistor.lineTo(x+dimension*9/10, y)
+        this.fakeResistor.lineTo(x+dimension, y)
+
+
+//hitbox
+        this.fakeResistor.rectangle = new PIXI.Graphics();
+        this.fakeResistor.rectangle.beginFill( 0x04b504)
+        this.fakeResistor.rectangle.drawRect(30, 60, 30, 30);
+        this.fakeResistor.rectangle.interactive = true;
+        this.fakeResistor.rectangle.dragging = false;
+        this.fakeResistor.rectangle.alpha = 0;
+
+        this.fakeResistor.rectangle.endFill();
+
+        app.stage.addChild(this.fakeResistor.rectangle);
+
+
+
+
+
+    }*/
+
+console.log(grid_height)
+console.log(grid_width)
+let game = new Board(grid_height, grid_width, cell_dimension);
+game.initBoard(grid_height, grid_width, cell_dimension);
+game.connectCells();
+game.makeFakeResistor();
+game.makeFakeVoltage();
+game.makeFakeWire();
+
+
+
+
+
+
+function onDragStartR(event)
+{
+    // store a reference to the data
+    // the reason for this is because of multitouch
+    // we want to track the movement of this particular touch
+    this.data = event.data;
+    this.alpha = .5;
+    this.dragging = true;
+    game.fakeResistor.data = event.data;
+    game.resistor = true;
+    console.log('onDragStartR called')
+
+
+}
+
+function onDragEndR()
+{
+
+
+
+    this.alpha = .5;
+
+    this.dragging = false;
+
+
+    // set the interaction data to null
+    this.data = null;
+    game.fakeResistor.data = null;
+   game.fakeResistor.x =0;
+   game.fakeResistor.y =0;
+   game.fakeResistor.rectangle.x =0;
+    game.fakeResistor.rectangle.y =0;
+    console.log("onDragEndR called")
+
+
+
+
+
+
+}
+
+function onDragMoveR()
+{
+    if (this.dragging)
+    {
+        this.alpha =.5;
+        var newPosition = this.data.getLocalPosition(this.parent);
+        this.position.x = newPosition.x-50;
+        this.position.y = newPosition.y-50;
+        game.fakeResistor.position.x = newPosition.x-50;
+        game.fakeResistor.position.y = newPosition.y-50;
+
+
+
+    }
+}
+
+function onDragStartV(event)
+{
+    // store a reference to the data
+    // the reason for this is because of multitouch
+    // we want to track the movement of this particular touch
+    this.data = event.data;
+    this.alpha = .5;
+    this.dragging = true;
+    game.fakeVoltage.data = event.data;
+    game.voltage = true;
+
+}
+
+function onDragEndV()
+{
+    this.alpha = .5;
+
+    this.dragging = false;
+
+    // set the interaction data to null
+    this.data = null;
+    game.fakeVoltage.x =0;
+    game.fakeVoltage.y =0;
+    game.fakeVoltage.rectangle.x =0;
+    game.fakeVoltage.rectangle.y =0;
+    game.fakeVoltage.data = null;
+
+
+
+}
+
+function onDragMoveV()
+{
+    if (this.dragging)
+    {
+        this.alpha =.5;
+        var newPosition = this.data.getLocalPosition(this.parent);
+        this.position.x = newPosition.x-50;
+        this.position.y = newPosition.y-80;
+        game.fakeVoltage.position.x = newPosition.x-50;
+        game.fakeVoltage.position.y = newPosition.y-80;
+
+
+
+    }
+}
+
+function onDragStartW(event)
+{
+    // store a reference to the data
+    // the reason for this is because of multitouch
+    // we want to track the movement of this particular touch
+    this.data = event.data;
+    game.wire = true;
+
+
+    this.dragging = true;
+    game.fakeWire.data = event.data;
+}
+
+function onDragEndW()
+{
+
+
+    this.dragging = false;
+    this.position.x = 0;
+    this.position.y = 0;
+
+
+
+
+    // set the interaction data to null
+    this.data = null;
+    game.fakeWire.data = null;
+
+}
+
+function onDragMoveW()
+{
+    if (this.dragging)
+    {
+
+        var newPosition = this.data.getLocalPosition(this.parent);
+        this.position.x = newPosition.x-40;
+        this.position.y = newPosition.y-120;
+
+
+
+
+    }
+}
+
+
+
+
+
+
+
+
+
+game.fakeResistor.rectangle.on('mousedown', onDragStartR);
+game.fakeResistor.rectangle.on('mouseup', onDragEndR);
+game.fakeResistor.rectangle.on('mousemove', onDragMoveR);
+game.fakeResistor.rectangle.on('touchstart', onDragStartR);
+game.fakeResistor.rectangle.on('mouseupoutside', onDragEndR);
+game.fakeResistor.rectangle.on('touchend', onDragEndR);
+game.fakeResistor.rectangle.on('touchendoutside', onDragEndR);
+game.fakeResistor.rectangle.on('touchmove', onDragMoveR);
+
+
+game.fakeVoltage.rectangle.on('mousedown', onDragStartV);
+game.fakeVoltage.rectangle.on('mouseup', onDragEndV);
+game.fakeVoltage.rectangle.on('mousemove', onDragMoveV);
+game.fakeVoltage.rectangle.on('touchstart', onDragStartV);
+game.fakeVoltage.rectangle.on('mouseupoutside', onDragEndV);
+game.fakeVoltage.rectangle.on('touchend', onDragEndV);
+game.fakeVoltage.rectangle.on('touchendoutside', onDragEndV);
+game.fakeVoltage.rectangle.on('touchmove', onDragMoveV);
+
+game.fakeWire.on('mousedown', onDragStartW);
+game.fakeWire.on('mouseup', onDragEndW);
+game.fakeWire.on('mousemove', onDragMoveW);
+game.fakeWire.on('touchstart', onDragStartW);
+game.fakeWire.on('mouseupoutside', onDragEndW);
+game.fakeWire.on('touchend', onDragEndW);
+game.fakeWire.on('touchendoutside', onDragEndW);
+game.fakeWire.on('touchmove', onDragMoveW);
+
+
+
 let testButton = new Button(10, window.innerHeight - 80, 100, 50, app, cell)
 testButton.draw()
 
