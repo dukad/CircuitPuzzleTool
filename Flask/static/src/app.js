@@ -3,13 +3,13 @@ import Button from "./button.js";
 import Board from './board.js';
 
 
-document.body.style.backgroundColor = 'silver';
+document.body.style.backgroundColor = 'black';
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
     {
         width: window.innerWidth,
         height: window.innerHeight,
-        backgroundColor: 0xFFFFFF,
+        backgroundColor: 0x000000,
         resolution: devicePixelRatio = 5,
         autoDensity: true,
     }
@@ -21,7 +21,7 @@ app.resize();
 document.body.appendChild(app.view)
 
 // constants
-const cell_dimension = 30
+const cell_dimension = 50
 let r_height = (window.innerHeight % cell_dimension)
 let r_width = ((window.innerWidth % cell_dimension))
 const grid_height = ((window.innerHeight - r_height)/ cell_dimension)
@@ -250,8 +250,6 @@ game.fakeWire.on('touchmove', onDragMoveW);
 
 game.eraser.on('click', onClickE);
 
-let testButton = new Button(10, window.innerHeight - 80, 100, 50, app, game.cell)
-testButton.draw()
 
 let solveButton = new Button(10, window.innerHeight - 80, 100, 50, app, game.cell)
 solveButton.draw()

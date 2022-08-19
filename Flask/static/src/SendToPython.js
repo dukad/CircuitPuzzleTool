@@ -1,5 +1,5 @@
 export default function SendToPython(net) {
-        jQuery.ajax({
+        $.ajax({
             type: 'POST',
             url: "/opa",
             data: { // parameters to send into python

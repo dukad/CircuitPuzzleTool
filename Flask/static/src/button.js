@@ -21,13 +21,13 @@ export default class Button {
          * render the button, writing the display text on top
          */
         this.graphic.beginFill(0xd18719)
-        this.graphic.drawRect(this.locationx, this.locationy, this.sizex, this.sizey)
+        this.graphic.drawRoundedRect(this.locationx, this.locationy, this.sizex, this.sizey)
         this.graphic.endFill()
         this.app.stage.addChild(this.graphic)
 
         this.text = new PIXI.Text('SOLVE', {fontFamily : 'Droid Serif', fontSize: 27, fill : 0xFFFFFF, align : 'center'});
         this.text.x = this.locationx + this.sizex/12
-        this.text.y = this.locationy + this.sizey/12
+        this.text.y = this.locationy + this.sizey/6
         this.app.stage.addChild(this.text)
     }
 

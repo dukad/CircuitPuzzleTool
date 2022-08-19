@@ -71,9 +71,10 @@ export default class Board {
     }
     drawBar(){
         const bar = new PIXI.Graphics();
-        bar.beginFill(0x808080)
-        bar.drawRect(17, 20 , 60, 140)
+        bar.beginFill(0x3A3B3C)
+        bar.drawRoundedRect(17, 20 , 60, 140)
         bar.endFill();
+        bar.interactive = true
 
         this.app.stage.addChild(bar);
 
