@@ -1,6 +1,7 @@
 import Cell, {Resistor, VoltageSource, Wire} from './cell.js';
 import Button from "./button.js";
 
+
 document.body.style.backgroundColor = 'silver';
 // create a new pixi application, all things inside the application must fit within this window
 const app = new PIXI.Application(
@@ -12,7 +13,7 @@ const app = new PIXI.Application(
         autoDensity: true,
     }
 )
-app.ticker.maxFPS = 15;
+app.ticker.maxFPS = 10;
 app.resize();
 
 // tell the html document to display the pixi application
@@ -486,9 +487,8 @@ game.eraser.on('click', onClickE);
 let testButton = new Button(10, window.innerHeight - 80, 100, 50, app, cell)
 testButton.draw()
 
-// let graph = new PIXI.Graphics
-//
-// graph.beginFill(0x04b504)
-// graph.drawRect(this.locationx, this.locationy, this.sizex, this.sizey)
-// graph.endFill()
-// graph.addChild(this.graphic)
+let solveButton = new Button(10, window.innerHeight - 80, 100, 50, app, cell)
+solveButton.draw()
+
+// testing()
+// console.log('finished')

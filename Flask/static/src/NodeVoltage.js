@@ -14,6 +14,7 @@ export default class NodeVoltage {
     }
 
     solve() {
+
         // console.log('solving')
         //find a wire on the matrix
         let part = this.find_a_part()
@@ -23,9 +24,16 @@ export default class NodeVoltage {
         }
         //get a list of all significant nodes
         let nodes = this.find_all_nodes(part)
+        let y = 0
+        let gnd;
         nodes.forEach(node => {
+            if (node.y > y) {
+                gnd = node
+                y = node.y
+            }
             node.reference = null
         })
+        gnd.reference = new Reference(0)
 
         // Create a net list to be solved using PySpice
         let list = this.create_net_list(nodes)
@@ -38,9 +46,9 @@ export default class NodeVoltage {
             string += list[i].string + '\n'
         }
 
-            console.log(string)
+        console.log(string)
 
-        SendToPython('netlistsolve.py', string)
+        SendToPython(string)
     }
 
     find_a_part() {
