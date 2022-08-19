@@ -37,9 +37,11 @@ class Board {
         this.fakeResistor = new PIXI.Graphics();
         this.fakeVoltage  = new PIXI.Graphics();
         this.fakeWire = new PIXI.Graphics();
+        this.eraser = null;
         this.resistor = false;
-       this.voltage = false;
-       this.wire = false;
+        this.voltage = false;
+        this.wire = false;
+        this.erased = false;
 
 
 
@@ -48,6 +50,7 @@ class Board {
         this.makeFakeResistor();
         this.makeFakeVoltage();
         this.makeFakeWire();
+        this.makeEraser();
 
     }
 
@@ -98,7 +101,7 @@ class Board {
     drawBar(){
         const bar = new PIXI.Graphics();
         bar.beginFill(0x808080)
-        bar.drawRect(20, 40 , 50, 120)
+        bar.drawRect(17, 20 , 60, 140)
         bar.endFill();
 
         app.stage.addChild(bar);
@@ -218,6 +221,17 @@ class Board {
 
 
     }
+
+    makeEraser(){
+
+        this.eraser = new PIXI.Text('Eraser', {fontFamily : 'Arial', fontSize: 18, fill :0x04b504, align : 'center' });
+        this.eraser.x = 20;
+        this.eraser.y = 35;
+        this.eraser.interactive = true;
+
+
+        app.stage.addChild(this.eraser);
+    }
 }
 
     /*makeFakeResistor(){
@@ -272,6 +286,7 @@ game.drawBar();
 game.makeFakeResistor();
 game.makeFakeVoltage();
 game.makeFakeWire();
+game.makeEraser();
 
 
 
@@ -426,6 +441,19 @@ function onDragMoveW()
 
     }
 }
+
+
+function onClickE(){
+    //idk how to negate in javascript lol
+    console.log('on click e running')
+    if(game.erased === false){
+        game.erased = true;
+    }
+    else{
+        game.erased = false;
+    }
+
+}
 game.fakeResistor.rectangle.on('mousedown', onDragStartR);
 game.fakeResistor.rectangle.on('mouseup', onDragEndR);
 game.fakeResistor.rectangle.on('mousemove', onDragMoveR);
@@ -453,7 +481,7 @@ game.fakeWire.on('touchend', onDragEndW);
 game.fakeWire.on('touchendoutside', onDragEndW);
 game.fakeWire.on('touchmove', onDragMoveW);
 
-
+game.eraser.on('click', onClickE);
 
 let testButton = new Button(10, window.innerHeight - 80, 100, 50, app, cell)
 testButton.draw()

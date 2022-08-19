@@ -15,6 +15,7 @@ export default class Cell {
         this.graphic.on('touchendoutside', () => this.onMouseUp())
         this.graphic.on('mouseupoutside', () => this.onMouseUp())
 
+
         this.xpixels = this.x * this.dimension; // pixel coordinates of the cell
         this.ypixels = this.y * this.dimension;
         this.matrix = matrix; //external matrix of the cell
@@ -119,16 +120,28 @@ export default class Cell {
         /**
          * onClick method for all cells, wires, and components
          */
-
-        if (this instanceof Wire) {
-            this.makePart('Resistor');
-        } else if (this instanceof Resistor) {
-            this.makePart('VoltageSource');
-        } else if (this instanceof VoltageSource) {
-            this.makePart('CurrentSource');
-        } else {
-            this.makePart('Wire')
+        console.log('onclick')
+        if(this.board.erased === true) {
+            this.makePart('Cell');
+            console.log(this.board.erased)
         }
+            else {
+
+
+            if (this instanceof Wire) {
+                this.makePart('Resistor');
+            } else if (this instanceof Resistor) {
+                this.makePart('VoltageSource');
+            } else if (this instanceof VoltageSource) {
+                this.makePart('CurrentSource');
+            } else {
+                this.makePart('Wire')
+            }
+        }
+
+    console.log('onclick2')
+        console.log(this.board.erased);
+
         // console.log('onClick running')
     }
 
@@ -136,6 +149,8 @@ export default class Cell {
         /**
          * onClick method for all cells, wires, and components
          */
+        console.log('right click ran')
+
         if(this instanceof Resistor) {
             this.makePart('VoltageSource');
         } else {
@@ -162,16 +177,7 @@ export default class Cell {
         if((this.left instanceof Wire) || (this.left instanceof Component) ){
             this.left.render();
         }
-       /* for (let i=-1; i<2; i++) { // iterate through possible directions
-            for (let j=-1; j<2; j++) {
-                if ((i !== 0) || (j !== 0)) { // don't include the center
-                    let part = this.matrix[Math.abs(this.y + i)][Math.abs(this.x + j)];
-                    if ((part instanceof Wire) || (part instanceof Component)) { //if adjacent objects are a wire
-                        part.render()
-                        }
-                    }
-                }
-            }*/
+
 
         }
 
@@ -196,6 +202,10 @@ export default class Cell {
         }
         else if(part === 'VoltageSource') {
             newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
+        }
+
+        else if(part === 'Cell'){
+            newPart = new Cell(this.x, this.y, this.dimension, this.app, this.matrix, this.board);
         }
         else {
             alert('Input non valid circuit part')
@@ -267,71 +277,19 @@ export default class Cell {
 
 
         newPart.draw()
-        newPart.render(); //draw wire
-        newPart.rerender();
+            if(newPart instanceof Wire || newPart instanceof Component){
+                newPart.render(); //draw wire
+                newPart.rerender();
+            }
+
+
+
 
         delete this // delete the original cell object
 
-      /*  /!**
-         * forms a new part in place of whatever was currently present
-         *!/
-        if ((this instanceof Wire) || (this instanceof Component)) {
-            this.drawingGraphic.clear()
-        }
-        if (this instanceof Component) {
-            this.text.destroy()
-        }
-
-        let newPart;
-        if(part === 'Wire') {
-            newPart = new Wire(this.x, this.y, this.dimension, this.app, this.matrix, this.board); // new wire object with same properties as the cell
-        }
-        else if(part === 'Resistor') {
-            newPart = new Resistor(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
-        }
-        else if(part === 'VoltageSource') {
-            newPart = new VoltageSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board);
-        }
-        else if(part === 'CurrentSource') {
-            newPart = new CurrentSource(this.x, this.y, this.dimension, this.app, this.matrix, 15, this.board)
-        }
-        else {
-            alert('Input non valid circuit part')
-        }
-        this.matrix[this.y][this.x] = newPart; // set the matrix coordinates to the new object
-        // newPart.draw()
-
-        // iterate through possible directions
-        let list = [this.matrix[Math.abs(this.y)][Math.abs(this.x + 1)], this.matrix[Math.abs(this.y)][Math.abs(this.x - 1)], this.matrix[Math.abs(this.y + 1)][Math.abs(this.x)], this.matrix[Math.abs(this.y - 1)][Math.abs(this.x)]]
-        for(let i=0; i<4; i++) {
-                let part = list[i];
-                try {
-                    if ((part instanceof Wire) || (part instanceof Component)) { //if adjacent objects are a wire
-                        newPart.connect(part) // connect this wire with adjacent wires
-                        part.render() //render adjacent wires again
-                        if (part instanceof Component) {
-                            part.refresh();
-                        }
-                        // newPart.render()
-                    }
-                } catch (err) {
-                    // console.log('issue happening in onClick')
-                }
-        }
-        newPart.draw()
-        newPart.render(); //draw wire
-        newPart.rerender();
-        // console.log('made a ', part, 'at', newPart.x, newPart.y)
-        // newPart.connected_parts.forEach(cn => {
-        //     console.log('connected to', cn.x, cn.y)
-        // })
-        this.connected_parts.forEach(cl => {
-            this.disconnect(cl)
-        })
-
-        delete this // delete the original cell object*/
 
     }
+
 
 
 
@@ -403,6 +361,9 @@ export class Wire extends Cell {
         this.display_directions.add(direction)
     }
 
+
+
+
     undisplay(direction) {
         /**
          * removes a direction from the display
@@ -437,6 +398,9 @@ export class Wire extends Cell {
         // console.log(this.x, this.y, this.display_directions, this.connected_parts.size)
         // console.log(this.connected_parts);
     }
+
+
+
 
     draw_a_wire() {
         /**
@@ -477,6 +441,7 @@ export class Component extends Cell {
         this.unit = ''
         // this.text = null;
         this.type = 'Component'
+        this.drawingGraphic.on('rightdown', () => this.onRightClick())
     }
 
     display_orient(direction) {
@@ -491,6 +456,7 @@ export class Component extends Cell {
          * not needed for components
          */
     }
+
 
     rotate() {
         /**
@@ -509,6 +475,25 @@ export class Component extends Cell {
             this.drawingGraphic.rotation = 5 * 3.1415 / 4
         } else if ((this.orientation === 2) || (this.orientation === 6)) {
             this.drawingGraphic.rotation = 5 * 3.1415 * 3 / 4;
+        }
+    }
+
+    onRightClick(){
+        if(this.orientation === null || this.orientation === 0){
+            this.orientation = 1;
+            this.rotate();
+
+        }
+
+        else if(this.orientation === 1){
+            this.orientation =2;
+            this.rotate();
+
+        }
+
+        else if(this.orientation === 2){
+            this.orientation = 0;
+            this.rotate();
         }
     }
 
@@ -548,10 +533,16 @@ export class Component extends Cell {
         this.text.interactive = true;
         this.text.buttonMode = true;
         this.text.on('pointerdown', () => this.onTextClick())
+        this.drawingGraphic.addChild(this.text);
+
     }
 
     onTextClick() {
         console.log('clicking text')
+        if(this.board.eraser === true){
+            this.text.delete();
+
+        }
     }
 
 }
