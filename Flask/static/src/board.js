@@ -104,8 +104,8 @@ export default class Board {
         this.fakeResistor.lineTo(x+dimension*9/10, y)
         this.fakeResistor.lineTo(x+dimension, y)
 
-        console.log("x pson " + this.fakeResistor.x);
-        console.log("y posn" + this.fakeResistor.y);
+        // console.log("x pson " + this.fakeResistor.x);
+        // console.log("y posn" + this.fakeResistor.y);
 
 //hitbox
         this.fakeResistor.rectangle = new PIXI.Graphics();
@@ -160,8 +160,8 @@ export default class Board {
         this.fakeVoltage.rectangle = new PIXI.Graphics();
         this.fakeVoltage.rectangle.beginFill( 0x04b504)
         this.fakeVoltage.rectangle.drawRect(30, 90, 30, 30);
-        console.log("volt " + this.fakeVoltage.x);
-        console.log("volt" + this.fakeVoltage.y);
+        // console.log("volt " + this.fakeVoltage.x);
+        // console.log("volt" + this.fakeVoltage.y);
 
         this.fakeVoltage.rectangle.interactive = true;
         this.fakeVoltage.rectangle.dragging = false;

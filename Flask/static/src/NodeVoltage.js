@@ -14,8 +14,7 @@ export default class NodeVoltage {
     }
 
     solve() {
-
-        // console.log('solving')
+        console.log('solving')
         //find a wire on the matrix
         let part = this.find_a_part()
         if (!(part instanceof Cell)) {
@@ -59,6 +58,7 @@ export default class NodeVoltage {
                 let cell = this.matrix[i][j]
                 // console.log(cell.x, cell.y, cell.type)
                 if ((cell.type === 'Wire') || (cell.type === 'Component')) {
+                    console.log('found ', cell.x, cell.y)
                     return cell
                 }
             }
@@ -116,7 +116,10 @@ export default class NodeVoltage {
         } else {
             seen.clear()
             let x = this.node_search(current_cell, seen)
-            // console.log(x.size, ' nodes found')
+            console.log(x.size, ' nodes found')
+            // x.forEach(node => {
+            //     console.log('node at', node.x, node.y)
+            // })
             return x
         }
     }
@@ -133,11 +136,11 @@ export default class NodeVoltage {
         seen_set.add(node)
         if (node.connected_parts.size >= 3) {
             nodes_set.add(node)
-            // console.log('found a node at ', node.x, node.y)
-            // console.log('the parts it is connected to are: ')
-            // node.connected_parts.forEach(cn => {
-            //     console.log(cn.x, cn.y, cn.type)
-            // })
+            console.log('found a node at ', node.x, node.y)
+            console.log('the parts it is connected to are: ')
+            node.connected_parts.forEach(cn => {
+                console.log(cn.x, cn.y, cn.type)
+            })
         }
         node.connected_parts.forEach(connected_cell => {
             //if not already seen
@@ -254,11 +257,9 @@ export default class NodeVoltage {
                 } else if (((array[i].connected_parts.size >= 3)) && (array[i] !== node)) {
                     // console.log('ive already seen', array[i].x, array[i].y, 'but its a node')
                     return array[i]
-                } else {
-                    // console.log('failed all if statements when at direction', direction.x, direction.y, 'iterating at', array[i].x, array[i].y)
                 }
             }
         }
-        alert('somehow returning nothing')
+        throw Error('Somehow didnt return any value in direction_recurse meaning that the direction checked was not a node or a component, none of its connected parts are nodes or components, and recursion doesnt find anything')
     }
 }

@@ -132,10 +132,10 @@ export default class Cell {
         /**
          * onClick method for all cells, wires, and components
          */
-        console.log('onclick')
+        // console.log('onclick')
         if(this.board.erased === true) {
             this.makePart('Cell');
-            console.log(this.board.erased)
+            // console.log(this.board.erased)
         }
             else {
 
@@ -151,8 +151,8 @@ export default class Cell {
             }
         }
 
-    console.log('onclick2')
-        console.log(this.board.erased);
+    // console.log('onclick2')
+        // console.log(this.board.erased);
 
         // console.log('onClick running')
     }
@@ -233,6 +233,15 @@ export default class Cell {
         newPart.right = this.right;
         //update parts connections
 
+        //disconnect old part
+
+        // if ((this instanceof Component)) {
+            this.connected_parts.forEach(part => {
+                this.disconnect(part)
+                this.rerender()
+                newPart.connect(part)
+            })
+        // }
         if(this.top !== null){
             // console.log('update bottom running')
             this.top.updateBottom(newPart);
@@ -282,10 +291,13 @@ export default class Cell {
         }
         newPart.draw()
 
+
+
         if(newPart instanceof Wire || newPart instanceof Component){
             newPart.render(); //draw wire
             newPart.rerender();
         }
+
 
         delete this // delete the original cell object
 
@@ -539,11 +551,11 @@ export class Component extends Cell {
     }
 
     onTextClick() {
-        console.log('clicking text')
-        if(this.board.eraser === true){
-            this.text.destroy();
+        // console.log('clicking text')
+        // if(this.board.erased === true){
+        //     this.text.destroy();
 
-        }
+        // }
     }
 
 }
