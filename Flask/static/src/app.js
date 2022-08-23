@@ -215,6 +215,13 @@ function onClickE(){
     console.log('on click e running')
     if(game.erased === false){
         game.erased = true;
+        //making the cursor a circle
+
+        const hoverIcon = new PIXI.Graphics();
+        hoverIcon.beginFill(0xFFC0CB)
+        hoverIcon.drawCircle(30, 30 , 30);
+        hoverIcon.endFill();
+
     }
     else{
         game.erased = false;
@@ -253,6 +260,14 @@ game.eraser.on('click', onClickE);
 
 let solveButton = new Button(10, window.innerHeight - 80, 100, 50, app, game.cell)
 solveButton.draw()
+const cursor = new PIXI.Graphics();
+cursor.beginFill(0xFFC0CB)
+cursor.drawCircle(30, 30, 30);
+cursor.endFill();
+
+
+
+
 
 // testing()
 // console.log('finished')
