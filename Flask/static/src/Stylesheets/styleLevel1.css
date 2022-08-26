@@ -8,7 +8,7 @@
 
 .fade-in-text {
     font-family: 'Nintendoid1';
-    font-size: 150px;
+    font-size: 10px;
     color: lightslategray;
     left: 400px;
     animation: fadeIn 5s;
