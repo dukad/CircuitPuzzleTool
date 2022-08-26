@@ -2,19 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="../../static/js/pixi.min.js"> </script>
+    <title>Circuit Puzzle Tool</title>
+    <script src="../../static/js/pixi.min.js">
+    </script>
     <link rel="stylesheet" href="../../static/src/Stylesheets/styleLevel1.css">
-
-
 </head>
-<body>
-<div>
-<script type="module" src="../../static/src/app.js"> </script>
-<div class="fade-in-text">
-    <p>Level 1</p>
-</div>
-</div>
 
+<body>
+<img onclick="openQuestionBar()" alt='Question Mark Icon' class="questionMark" src="https://upload.wikimedia.org/wikipedia/commons/4/46/Question_mark_%28black%29.svg">
+<div class='bar'></div>
+<div class='bar'></div>
+<div class='bar'></div>
+
+<button class="menuHitBox" onclick="openMenu()"></button>
+<div id="menu" class="menu">
+    <a href="javascript:" class="closebtn" onclick="closeMenu()">&times;</a>
+    <a href="about.html?_ijt=557d2jsskrcvdrqefm7dc56esd&_ij_reload=RELOAD_ON_SAVE">About</a>
+    <a href="#">Rules</a>
+    <a href="#">Levels</a>
+    <a href="#">Help</a>
+</div>
+<script type="module" src="../../static/src/app.js">
+</script>
+<div id="questionBar" class="questionBar"></div>
+<!--<script type="module" src="/src/menu.js">
+</script>-->
+
+<script>
+    function openMenu(){
+        let btn = document.getElementById('menu')
+        btn.classList.add('menuPullOut')
+        btn.classList.remove('menuReturn')
+
+    }
+    function closeMenu(){
+        let btn = document.getElementById('menu')
+        btn.classList.add('menuReturn')
+        btn.classList.remove('menuPullOut')
+    }
+    function openQuestionBar(){
+        if (document.getElementById('questionBar').classList.contains('questionBarOut')){
+            document.getElementById('questionBar').classList.remove('questionBarOut')
+        }
+
+        else {
+            document.getElementById('questionBar').classList.add('questionBarOut')
+        }
+    }
+</script>
 </body>
+
 </html>
