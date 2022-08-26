@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Circuit Puzzle Tool</title>
     <link rel="shortcut icon" type="image/jpg" href="../static/images/favicon.jpg"/>
-    <script src="../static/js/pixi.min.js">
-    </script>
+    <script src="../static/js/pixi.min.js"></script>
     <script src="../static/js/jquery-3.6.0.min.js"> </script>
     <script src = 'https://pagecdn.io/lib/mathjs/11.0.1/math.min.js'></script>
     <link rel="stylesheet" href="../static/src/Stylesheets/styleIndex.css">
@@ -13,7 +12,7 @@
 </head>
 
 <body>
-<a href="html/level1.html" class="button1">Start</a>
+<a href = "{{ url_for('level1') }}" class="button1">Start</a>
     <img onclick="openQuestionBar()" alt='Question Mark Icon' class="questionMark" src="https://upload.wikimedia.org/wikipedia/commons/4/46/Question_mark_%28black%29.svg">
     <div class='bar'></div>
     <div class='bar'></div>
