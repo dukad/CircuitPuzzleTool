@@ -48,7 +48,7 @@ def opanalysis(netlist):
     print(circuit)
 
     simulator = circuit.simulator(temperature=25, nominal_temperature=25)
-    analysis = simulator.operating_point() # ERROR OCCURING HERE
+    analysis = simulator.operating_point() # ERROR OCCURING HERE often means that no ground was designated, check netlist
     print('line 52')
 #     if you get errors here make sure to run
 #                                         pyspice-post-installation --install-ngspice-dll
@@ -68,9 +68,9 @@ def opanalysis(netlist):
         else:
             output += ('n000 ')
             output += '0 V\n'
-    output += '\n'
+
     for node in analysis.branches.values():
-        output += str(node) + ' '
-        output += str(float(node)) + '\n'
+        output += '\n' + str(node) + ' '
+        output += str(float(node))
     return output
 

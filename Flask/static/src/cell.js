@@ -1,3 +1,5 @@
+import Reference from "./Reference.js";
+
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
         this.graphic = new PIXI.Graphics; //Container for the graphics of each cell
@@ -15,6 +17,14 @@ export default class Cell {
         this.graphic.on('touchendoutside', () => this.onMouseUp())
         this.graphic.on('mouseupoutside', () => this.onMouseUp())
 
+        this.voltage = null
+        this.volttext = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+        this.current = null
+        this.amptext = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+        this.arrowGraph = new PIXI.Graphics
+
+        this.netitem = null
+        this.reference = null
 
         this.xpixels = this.x * this.dimension; // pixel coordinates of the cell
         this.ypixels = this.y * this.dimension;
@@ -22,8 +32,8 @@ export default class Cell {
         this.connected_parts = new Set();
         this.graphic.on('mouseover', () => this.onHover());
         this.type = 'Cell'
-        this.text = new PIXI.Text('', {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
-        this.reference = null
+        this.text = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+
         this.board = board;
 
         this.top = null;
@@ -115,6 +125,16 @@ export default class Cell {
         return direction
     }
 
+    find_space() {
+        try {
+            const [connected] = this.connected_parts
+            let direction = this.find_direction(connected)
+            return ((direction % 2) + 1) // display on either the right or above
+        } catch(TypeError) {
+            return null
+        }
+    }
+
     draw() {
         /**
          * draws the cell that backgrounds the components
@@ -172,6 +192,7 @@ export default class Cell {
     }
 
     rerender() {
+        // console.log('running rerender')
         /**
          * rerender surrounding parts ensuring everything is up to date
          */
@@ -199,7 +220,7 @@ export default class Cell {
          * forms a new part in place of whatever was currently present
          */
         //console.log(this.x, this.y, this.top.x, this.top.y)
-
+        // console.log('running makePart')
         if ((this instanceof Wire) || (this instanceof Component)) {
             this.drawingGraphic.clear()
             if (this instanceof Component) {
@@ -233,15 +254,12 @@ export default class Cell {
         newPart.right = this.right;
         //update parts connections
 
-        //disconnect old part
 
-        // if ((this instanceof Component)) {
-            this.connected_parts.forEach(part => {
-                this.disconnect(part)
-                this.rerender()
-                newPart.connect(part)
-            })
-        // }
+        this.connected_parts.forEach(part => {
+            this.disconnect(part)
+            newPart.connect(part)
+        })
+
         if(this.top !== null){
             // console.log('update bottom running')
             this.top.updateBottom(newPart);
@@ -257,16 +275,18 @@ export default class Cell {
         }
         if((this.top instanceof Wire) || (this.top instanceof Component)) {
             newPart.connect(this.top);
-            this.top.render();
-
+            if (this.top instanceof Wire) {
+                this.top.render();
+            }
             if (this.top instanceof Component) {
                 this.top.refresh();
             }
         }
         if((this.bottom instanceof Wire) || (this.bottom instanceof Component)) {
             newPart.connect(this.bottom);
-            this.bottom.render();
-
+            if (this.bottom instanceof Wire) {
+                this.bottom.render();
+            }
             if (this.bottom instanceof Component) {
                 this.bottom.refresh();
             }
@@ -274,8 +294,9 @@ export default class Cell {
 
         if((this.right instanceof Wire) || (this.right instanceof Component)) {
             newPart.connect(this.right);
-            this.right.render();
-
+            if (this.right instanceof Wire) {
+                this.right.render();
+            }
             if (this.right instanceof Component) {
                 this.right.refresh();
             }
@@ -283,8 +304,9 @@ export default class Cell {
 
         if((this.left instanceof Wire) || (this.left instanceof Component)) {
             newPart.connect(this.left);
-            this.left.render();
-
+            if (this.left instanceof Wire) {
+                this.left.render();
+            }
             if (this.left instanceof Component) {
                 this.left.refresh();
             }
@@ -346,6 +368,140 @@ export default class Cell {
     updateRight(part){
         this.right = part;
     }
+
+
+
+    render_current() {
+        console.log('rendering current...')
+        this.amptext.destroy()
+        // let space = this.find_space()
+        let dispcurrent = Math.abs(Math.round(parseFloat(this.current) * 1000) / 1000).toString()
+        this.amptext = new PIXI.Text(dispcurrent + ' A', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+        let dir = this.draw_arrow()
+
+        if (dir % 2 === 0) {
+            this.amptext.x = this.xpixels + this.dimension * 1/5
+            this.amptext.y = this.ypixels - this.dimension * 2/5
+        } else {
+            this.amptext.x = this.xpixels - this.dimension * 2/5
+            this.amptext.y = this.ypixels - this.dimension * 1/10
+        }
+
+
+        this.app.stage.addChild(this.amptext)
+
+
+    }
+
+    draw_arrow() {
+        console.log('drawing arrow')
+        this.arrowGraph.destroy()
+        this.arrowGraph = new PIXI.Graphics
+        this.arrowGraph.lineStyle(this.dimension/20, 0x04b504)
+        //draw an arrow in the correct direction
+        // for a connected direction
+        let seen = new Set()
+        const [check_direction] = this.connected_parts
+        seen.add(this)
+        // go until finding a node/component reference
+
+
+        let direction_override = false
+        let checking = check_direction
+        while (checking.reference === null) {
+            seen.add(checking)
+            checking.connected_parts.forEach(connected => {
+                if (!(seen.has(connected))) {
+                    checking = connected
+                }
+            })
+            if ((checking instanceof Component) && (this.reference !== null)) {
+                if (checking.netitem.node1 === this.netitem.node2) {
+                    console.log('checking nodes...')
+                    direction_override = true
+                    break
+                }
+            }
+        }
+        console.log('evaluating at node', checking.x, checking.y)
+        // console.log(checking.x, checking.y)
+        // check if that reference is node 1 or node 2 according to this.netitem
+        let direction = this.find_direction(check_direction)
+        console.log('running at cell', this.x, this.y)
+        console.log('node in this direction direction:', direction)
+        console.log('node at:', check_direction.x, check_direction.y)
+
+        //draw the line that will become the arrow
+
+        if (direction % 2 === 0) {
+            // display a horizontal bar above
+            this.arrowGraph.moveTo(this.xpixels + this.dimension/5, this.ypixels - this.dimension/10)
+            this.arrowGraph.lineTo(this.xpixels + this.dimension*4/5, this.ypixels - this.dimension/10)
+        } else {
+            // display a vertical bar
+            this.arrowGraph.moveTo(this.xpixels - this.dimension/10, this.ypixels + this.dimension/5)
+            this.arrowGraph.lineTo(this.xpixels - this.dimension/10, this.ypixels + this.dimension*4/5)
+        }
+        let display_arrow_dir;
+        // if that direction is equal to the node 2 direction XOR the current is negative, then display the arrow in the node 2 direction
+
+
+        let floatCurrent = parseFloat(this.current)
+        console.log(this.netitem.node2 === checking.reference, floatCurrent < 0)
+
+        if (((this.netitem.node2 === checking.reference) && (!(floatCurrent < 0))) || ((!(this.netitem.node2 === checking.reference)) && (floatCurrent < 0))) {
+            console.log('XOR!')
+            display_arrow_dir = direction
+        } else { //display the arrow in the node 1 direction, the reverse of direction
+            console.log('reversing directions...')
+            display_arrow_dir = this.reverse_direction(direction)
+        }
+
+        if (direction_override) {
+            console.log('overriding...')
+            display_arrow_dir = this.reverse_direction(direction)
+        }
+
+        console.log('display arrow at', display_arrow_dir)
+
+        if (display_arrow_dir === 1) {
+            this.arrowGraph.moveTo(this.xpixels - this.dimension*2/10, this.ypixels + this.dimension * 3/10)
+            this.arrowGraph.lineTo(this.xpixels - this.dimension/10, this.ypixels + this.dimension*1/5)
+            this.arrowGraph.lineTo(this.xpixels, this.ypixels + this.dimension * 3/10)
+        } else if (display_arrow_dir === 2 ) {
+            this.arrowGraph.moveTo(this.xpixels + this.dimension*7/10, this.ypixels - this.dimension*2/10)
+            this.arrowGraph.lineTo(this.xpixels + this.dimension*4/5, this.ypixels - this.dimension/10)
+            this.arrowGraph.lineTo(this.xpixels + this.dimension*7/10, this.ypixels)
+        } else if (display_arrow_dir === 3 ) {
+            this.arrowGraph.moveTo(this.xpixels - this.dimension*2/10, this.ypixels + this.dimension* 7/10)
+            this.arrowGraph.lineTo(this.xpixels - this.dimension/10, this.ypixels + this.dimension*4/5)
+            this.arrowGraph.lineTo(this.xpixels, this.ypixels + this.dimension* 7/10)
+        } else if (display_arrow_dir === 4 ) {
+            this.arrowGraph.moveTo(this.xpixels + this.dimension*3/10, this.ypixels - this.dimension*2/10)
+            this.arrowGraph.lineTo(this.xpixels + this.dimension*1/5, this.ypixels - this.dimension/10)
+            this.arrowGraph.lineTo(this.xpixels + this.dimension*3/10, this.ypixels)
+        }
+        this.app.stage.addChild(this.arrowGraph)
+        return display_arrow_dir
+    }
+
+    render_voltage() {
+        //render the given voltage of a cell
+        console.log('rendering voltage...')
+        this.volttext.destroy()
+
+        let dispvoltage = ((Math.round(parseFloat(this.voltage) * 1000)) / 1000).toString()
+        this.volttext = new PIXI.Text(dispvoltage + ' V', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+        if (this instanceof Component) {
+            this.volttext.x = this.xpixels - this.dimension*3/10
+            this.volttext.y = this.ypixels - this.dimension/5
+        } else {
+            this.volttext.x = this.xpixels
+            this.volttext.y = this.ypixels - this.dimension * 1/10
+        }
+        this.app.stage.addChild(this.volttext)
+
+    }
 }
 
 
@@ -398,6 +554,7 @@ export class Wire extends Cell {
         /**
          * recreate the way the object looks on screen
          */
+        // console.log('running render')
         this.drawingGraphic.clear()
         // this.graphic = new PIXI.Graphics // recreate the item
         if ((this.display_directions.size !== 2)) { //if you want to see a big circle
@@ -417,7 +574,7 @@ export class Wire extends Cell {
          */
         // this.graphic.lineStyle.re
         // this.drawingGraphic.clear()
-        this.drawingGraphic.lineStyle(this.dimension/7, 0x04b504, 2); // change the linestyle to thick green
+        this.drawingGraphic.lineStyle(this.dimension/7, 0x04b504); // change the linestyle to thick green
         this.display_directions.forEach(dir => {
             let y_change;
             let x_change;
@@ -488,7 +645,7 @@ export class Component extends Cell {
         //set pivot point to the middle
         this.drawingGraphic.x = this.xpixels + this.dimension / 2;
         this.drawingGraphic.y = this.ypixels + this.dimension / 2;
-        this.drawingGraphic.pivot.x = this.drawingGraphic.x;
+        this.drawingGraphic.pivot.x = this.drawingGraphic.x
         this.drawingGraphic.pivot.y = this.drawingGraphic.y;
         if (this.orientation === null) {
             this.drawingGraphic.rotation = 0;
@@ -515,6 +672,7 @@ export class Component extends Cell {
     }
 
     refresh() {
+        // console.log('running refresh')
         let list = [this.left, this.right, this.top, this.bottom]
         for (let i = 0; i < list.length; i++) {
             let part = list[i]
@@ -538,17 +696,27 @@ export class Component extends Cell {
          * render the text object that displays the value of the resistor
          */
         this.text.destroy()
-        this.text = new PIXI.Text(this.value.toString() + ' ' + this.unit, {fontFamily : 'Droid Serif', fontSize: 12, fill : 0x04b504, align : 'center'});
-        this.text.x = this.xpixels + (this.dimension*16/15)
-        this.text.y = this.ypixels + this.dimension*2/5
+        let space = this.find_space()
+        this.text = new PIXI.Text(this.value.toString() + ' ' + this.unit, {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
+        if (space === 2) {
+            //display text to the right
+            this.text.x = this.xpixels + (this.dimension)
+            this.text.y = this.ypixels + this.dimension*2/5
+        } else if ((space === 1) || (space === null)) {
+            // display text below
+            this.text.x = this.xpixels + this.dimension * 1/10
+            this.text.y = this.ypixels + this.dimension * 5/5
+        }
+
         this.app.stage.addChild(this.text)
 
-        this.text.interactive = true;
-        this.text.buttonMode = true;
+        // this.text.interactive = true;
+        // this.text.buttonMode = true;
         // this.text.on('pointerdown', () => this.onTextClick())
         // this.drawingGraphic.addChild(this.text);
 
     }
+
 
     onTextClick() {
         // console.log('clicking text')
