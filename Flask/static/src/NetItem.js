@@ -1,6 +1,7 @@
 export default class NetItem {
     constructor(component, netnum) {
         this.component = component
+        this.component.netitem = this
         this.reference = netnum
         this.node1 = null
         this.node2 = null

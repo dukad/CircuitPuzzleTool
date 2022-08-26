@@ -1,18 +1,23 @@
-export default function SendToPython(net) {
+import DisplayValues from "./dispay_values.js";
+
+export default function SendToPython(net, node_list, comp_list) {
         $.ajax({
+            // async: false,
             type: 'POST',
             url: "/opa",
             data: { // parameters to send into python
                 netlist: net
             },
             success: function (response) {
-                console.log(response);
+                // $.resolve(response)
+                // console.log(response)
+                console.log('succeeded')
+                // console.log(typeof response)
+                // console.log(response)
+                DisplayValues(response, node_list, comp_list)
+                return response
             }
         })
-            // .done(function (data) { // data is what is returned by python
-            //     // do something
-            //     console.log(data)
-            //     console.log(typeof data)
-            // })
 }
+
 
