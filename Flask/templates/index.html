@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Circuit Puzzle Tool</title>
     <link rel="shortcut icon" type="image/jpg" href="../static/images/favicon.jpg"/>
-    <script src="../static/js/pixi.min.js">
-    </script>
+    <script src="../static/js/pixi.min.js"></script>
     <script src="../static/js/jquery-3.6.0.min.js"> </script>
     <script src = 'https://pagecdn.io/lib/mathjs/11.0.1/math.min.js'></script>
     <link rel="stylesheet" href="../static/src/Stylesheets/styleIndex.css">
@@ -13,48 +12,48 @@
 </head>
 
 <body>
-<a href="html/level1.html" class="button1">Start</a>
-<img onclick="openQuestionBar()" alt='Question Mark Icon' class="questionMark" src="https://upload.wikimedia.org/wikipedia/commons/4/46/Question_mark_%28black%29.svg">
-<div class='bar'></div>
-<div class='bar'></div>
-<div class='bar'></div>
-<button class="menuHitBox" onclick="openMenu()"></button>
-<div id="menu" class="menu">
-    <a href="javascript:" class="closebtn" onclick="closeMenu()">&times;</a>
-    <a href="about.html?_ijt=557d2jsskrcvdrqefm7dc56esd&_ij_reload=RELOAD_ON_SAVE">About</a>
-    <a href="#">Rules</a>
-    <a href="#">Levels</a>
-    <a href="#">Help</a>
-</div>
+<a href = "{{ url_for('level1') }}" class="button1">Start</a>
+    <img onclick="openQuestionBar()" alt='Question Mark Icon' class="questionMark" src="https://upload.wikimedia.org/wikipedia/commons/4/46/Question_mark_%28black%29.svg">
+    <div class='bar'></div>
+    <div class='bar'></div>
+    <div class='bar'></div>
+    <button class="menuHitBox" onclick="openMenu()"></button>
+    <div id="menu" class="menu">
+        <a href="javascript:" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="about.html?_ijt=557d2jsskrcvdrqefm7dc56esd&_ij_reload=RELOAD_ON_SAVE">About</a>
+        <a href="#">Rules</a>
+        <a href="#">Levels</a>
+        <a href="#">Help</a>
+    </div>
 
-<div id="questionBar" class="questionBar"></div>
-<!--<script type="module" src="/src/menu.js">
-</script>-->
+    <div id="questionBar" class="questionBar"></div>
+   <!--<script type="module" src="/src/menu.js">
+   </script>-->
 <div class="typewriter">
     <h1>Welcome to the circuit puzzle tool!</h1>
 </div>
-<script>
-    function openMenu(){
-        let btn = document.getElementById('menu')
-        btn.classList.add('menuPullOut')
-        btn.classList.remove('menuReturn')
+    <script>
+        function openMenu(){
+            let btn = document.getElementById('menu')
+            btn.classList.add('menuPullOut')
+            btn.classList.remove('menuReturn')
 
     }
-    function closeMenu(){
-        let btn = document.getElementById('menu')
-        btn.classList.add('menuReturn')
-        btn.classList.remove('menuPullOut')
-    }
-    function openQuestionBar(){
-        if (document.getElementById('questionBar').classList.contains('questionBarOut')){
-            document.getElementById('questionBar').classList.remove('questionBarOut')
+        function closeMenu(){
+            let btn = document.getElementById('menu')
+            btn.classList.add('menuReturn')
+            btn.classList.remove('menuPullOut')
         }
+        function openQuestionBar(){
+            if (document.getElementById('questionBar').classList.contains('questionBarOut')){
+                document.getElementById('questionBar').classList.remove('questionBarOut')
+            }
 
-        else {
-            document.getElementById('questionBar').classList.add('questionBarOut')
+            else {
+                document.getElementById('questionBar').classList.add('questionBarOut')
+            }
         }
-    }
-</script>
+    </script>
 </body>
 
 </html>
