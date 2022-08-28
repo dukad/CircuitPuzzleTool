@@ -15,7 +15,6 @@ def opa():
 
 @app.route('/level1', methods=['GET'])
 def level1():
-    print('running level 1')
     return render_template('/level1.html')
 
 if __name__ == '__main__' :
