@@ -1,4 +1,5 @@
 import Reference from "./Reference.js";
+import Board from "./board.js";
 
 export default class Cell {
     constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
@@ -22,6 +23,7 @@ export default class Cell {
         this.current = null
         this.amptext = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
         this.arrowGraph = new PIXI.Graphics
+        this.editingGraph = new PIXI.Graphics
 
         this.netitem = null
         this.reference = null
@@ -153,6 +155,10 @@ export default class Cell {
          * onClick method for all cells, wires, and components
          */
         // console.log('onclick')
+        if (this.board.mode === 'editing') {
+            this.board.changeMode()
+        }
+
         if(this.board.erased === true) {
             this.makePart('Cell');
             // console.log(this.board.erased)
@@ -214,6 +220,9 @@ export default class Cell {
 
         }
 
+    changeval(val) {
+        this.value = val
+    }
 
     makePart(part) {
         /**
@@ -691,10 +700,23 @@ export class Component extends Cell {
         }
     }
 
+    render_editing(locationx, locationy, sizex, sizey) {
+        console.log('render_editing')
+        this.editingGraph.destroy()
+        this.editingGraph = new PIXI.Graphics
+        if ((this.board.mode === 'editing') && (this.board.selectedCell === this)) {
+            console.log('running if')
+            this.editingGraph.lineStyle(1, 0xFFFFFF)
+            this.editingGraph.drawRect(locationx, locationy, sizex, sizey)
+        }
+        this.app.stage.addChild(this.editingGraph)
+    }
+
     render_value() {
         /**
          * render the text object that displays the value of the resistor
          */
+
         this.text.destroy()
         let space = this.find_space()
         this.text = new PIXI.Text(this.value.toString() + ' ' + this.unit, {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
@@ -702,28 +724,27 @@ export class Component extends Cell {
             //display text to the right
             this.text.x = this.xpixels + (this.dimension)
             this.text.y = this.ypixels + this.dimension*2/5
+            this.render_editing(this.text.x, this.text.y, this.text.width, this.text.height)
         } else if ((space === 1) || (space === null)) {
             // display text below
             this.text.x = this.xpixels + this.dimension * 1/10
             this.text.y = this.ypixels + this.dimension * 5/5
+            this.render_editing(this.text.x, this.text.y, this.text.width, this.text.height)
         }
 
         this.app.stage.addChild(this.text)
 
-        // this.text.interactive = true;
-        // this.text.buttonMode = true;
-        // this.text.on('pointerdown', () => this.onTextClick())
-        // this.drawingGraphic.addChild(this.text);
+        this.text.interactive = true;
+        this.text.buttonMode = true;
+        this.text.on('pointerdown', () => this.onTextClick())
+
 
     }
 
 
     onTextClick() {
-        // console.log('clicking text')
-        // if(this.board.erased === true){
-        //     this.text.destroy();
-
-        // }
+        this.board.changeMode(this)
+        this.render_value()
     }
 
 }

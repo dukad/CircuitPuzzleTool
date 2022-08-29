@@ -18,6 +18,9 @@ export default class Board {
         this.erased = false;
         this.app = app;
 
+        this.mode = 'default'
+        this.string = '';
+        this.selectedCell = null
 
         this.makeFakeResistor();
         this.makeFakeVoltage();
@@ -72,7 +75,7 @@ export default class Board {
     drawBar(){
         const bar = new PIXI.Graphics();
         bar.beginFill(0x3A3B3C)
-        bar.drawRoundedRect(17, 20 , 60, 140)
+        bar.drawRoundedRect(17, 20 , 60, 300)
         bar.endFill();
         bar.interactive = true
 
@@ -201,7 +204,61 @@ export default class Board {
         this.eraser.y = 35;
         this.eraser.interactive = true;
 
-
         this.app.stage.addChild(this.eraser);
+    }
+
+
+    onKeyPress(key) {
+        let numbers = new Set()
+        numbers.add('.')
+        for (let i = 0; i< 10; i++) {
+            numbers.add(i.toString())
+        }
+        console.log('letter typed is: ', key)
+        console.log('type is:', typeof this.string)
+        if (this.mode === "editing") {
+            if (key === 'Backspace') {
+                console.log('running Backspace')
+                this.string = this.string.slice(0, -1)
+                let val = parseFloat(this.string)
+                this.selectedCell.changeval(val)
+                this.selectedCell.render_value()
+
+            } else if (key === 'Enter') {
+                this.changeMode(this.cell)
+
+            } else if (numbers.has(key)) {
+                this.string = this.string + key
+                console.log(this.string)
+                let val = parseFloat(this.string)
+                this.selectedCell.changeval(val)
+                this.selectedCell.render_value()
+            }
+        } else if (this.mode === 'default') {
+        } else {
+            console.log(':O')
+        }
+    }
+
+    changeMode(cell) {
+        if (this.selectedCell === cell) {
+            if (this.mode === 'default') {
+                this.mode = 'editing'
+                console.log('this.mode =', this.mode)
+            } else {
+                this.mode = 'default'
+                console.log('this.mode =', this.mode)
+            }
+        } else {
+            if (this.selectedCell instanceof Cell) {
+                console.log('running')
+                let oldCell = this.selectedCell
+                this.selectedCell = cell
+                oldCell.render_value()
+            }
+            this.selectedCell = cell
+            this.mode = 'editing'
+            console.log('this.mode =', this.mode)
+        }
     }
 }
