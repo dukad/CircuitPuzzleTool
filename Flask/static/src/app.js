@@ -17,6 +17,8 @@ const app = new PIXI.Application(
 app.ticker.maxFPS = 10;
 app.resize();
 
+
+
 // tell the html document to display the pixi application
 document.body.appendChild(app.view)
 
@@ -79,8 +81,12 @@ game.makeFakeVoltage();
 game.makeFakeWire();
 game.makeEraser();
 
+window.addEventListener("keydown", onKeyDown)
 
-
+function onKeyDown(event) {
+    // console.log(event.key)
+    game.onKeyPress(event.key)
+}
 
 function onDragStartR(event)
 {
@@ -264,7 +270,6 @@ const cursor = new PIXI.Graphics();
 cursor.beginFill(0xFFC0CB)
 cursor.drawCircle(30, 30, 30);
 cursor.endFill();
-
 
 
 

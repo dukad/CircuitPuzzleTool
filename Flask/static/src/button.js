@@ -8,7 +8,6 @@ export default class Button {
         this.sizey = sizey
         this.app = app
         this.matrix = matrix
-        console.log('constructor running')
         this.graphic = new PIXI.Graphics
         this.text = null
         this.graphic.interactive = true
