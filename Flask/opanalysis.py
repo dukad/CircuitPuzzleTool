@@ -4,11 +4,12 @@ import PySpice.Logging.Logging as Logging
 from PySpice.Spice.Netlist import Circuit
 
 def opanalysis(netlist):
-    print('running opanalysis')
+    print(netlist)
+#     print('running opanalysis')
     circuit = Circuit('Circuit Puzzle Tool')
-    print('circuit created')
+#     print('circuit created')
     logger = Logging.setup_logging()
-    print('logger created')
+#     print('logger created')
     nodes_set = set()
     resistors = set()
     lines = netlist.split('\n')
@@ -42,15 +43,15 @@ def opanalysis(netlist):
         except(IndexError):
             pass
 
-    print('line 43')
+    print(circuit)
+
     for resistor in resistors:
         resistor.plus.add_current_probe(circuit)
-    print(circuit)
+#     print(circuit)
 
     simulator = circuit.simulator(temperature=25, nominal_temperature=25)
     analysis = simulator.operating_point() # ERROR OCCURING HERE often means that no ground was designated, check netlist
-    print('line 52')
-#     if you get errors here make sure to run
+#     if you get errors here make sure to run after navigating to where your python files are stored. You may have to run the function with a ./ in front
 #                                         pyspice-post-installation --install-ngspice-dll
 #                                         to properly install ngspice
     # print(nodes_set)

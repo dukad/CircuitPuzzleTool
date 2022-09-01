@@ -24,6 +24,7 @@ export default class Cell {
         this.amptext = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 10, fill : 0x04b504, align : 'center'});
         this.arrowGraph = new PIXI.Graphics
         this.editingGraph = new PIXI.Graphics
+        this.orientation = 1;
 
         this.netitem = null
         this.reference = null
@@ -80,7 +81,7 @@ export default class Cell {
          * this function is designed to be overridden, the opposite of the display_orient method
          * @param {number} direction integer 1-4 NESW
          */
-        alert('Called \' undisplay \' method on an empty cell')
+        // alert('Called \' undisplay \' method on an empty cell')
     }
 
     reverse_direction(dir) {
@@ -99,6 +100,20 @@ export default class Cell {
             reverse = 2
         }
         return (reverse);
+    }
+
+    find_cell(direction) {
+        if (direction === 1) {
+            return this.top
+        } else if (direction === 2) {
+            return this.right
+        } else if (direction === 3) {
+            return this.bottom
+        } else if (direction === 4) {
+            return this.left
+        } else {
+            return null
+        }
     }
 
     find_direction(part) {
@@ -176,11 +191,6 @@ export default class Cell {
                 this.makePart('Wire')
             }
         }
-
-    // console.log('onclick2')
-        // console.log(this.board.erased);
-
-        // console.log('onClick running')
     }
 
     onRightClick() {
@@ -224,6 +234,10 @@ export default class Cell {
         this.value = val
     }
 
+    orient(direction) {
+        this.orientation = direction
+    }
+
     makePart(part) {
         /**
          * forms a new part in place of whatever was currently present
@@ -236,6 +250,7 @@ export default class Cell {
                 this.text.destroy()
             }
         }
+
 
         let newPart;
         if(part === 'Wire') {
@@ -269,19 +284,34 @@ export default class Cell {
             newPart.connect(part)
         })
 
+
+
         if(this.top !== null){
             // console.log('update bottom running')
             this.top.updateBottom(newPart);
+            // if (this.top instanceof Component) {
+            //     this.top.orient(3)
+            // }
         }
         if(this.bottom !== null){
             this.bottom.updateTop(newPart);
+            // if (this.bottom instanceof Component) {
+            //     this.bottom.orient(1)
+            // }
         }
         if(this.right !== null){
             this.right.updateLeft(newPart);
+            // if (this.right instanceof Component) {
+            //     this.right.orient(4)
+            // }
         }
         if(this.left !== null){
             this.left.updateRight(newPart);
+            // if (this.left instanceof Component) {
+            //     this.left.orient(2)
+            // }
         }
+
         if((this.top instanceof Wire) || (this.top instanceof Component)) {
             newPart.connect(this.top);
             if (this.top instanceof Wire) {
@@ -289,6 +319,7 @@ export default class Cell {
             }
             if (this.top instanceof Component) {
                 this.top.refresh();
+                this.top.orient(3)
             }
         }
         if((this.bottom instanceof Wire) || (this.bottom instanceof Component)) {
@@ -298,6 +329,7 @@ export default class Cell {
             }
             if (this.bottom instanceof Component) {
                 this.bottom.refresh();
+                this.bottom.orient(1)
             }
         }
 
@@ -308,6 +340,7 @@ export default class Cell {
             }
             if (this.right instanceof Component) {
                 this.right.refresh();
+                this.right.orient(4)
             }
         }
 
@@ -318,8 +351,12 @@ export default class Cell {
             }
             if (this.left instanceof Component) {
                 this.left.refresh();
+                this.left.orient(2)
             }
         }
+
+
+
         newPart.draw()
 
 
@@ -328,6 +365,7 @@ export default class Cell {
             newPart.render(); //draw wire
             newPart.rerender();
         }
+
 
 
         delete this // delete the original cell object
@@ -346,7 +384,6 @@ export default class Cell {
         if(this.board.resistor === true){
             this.bottom.makePart('Resistor')
             this.board.resistor = false;
-
         }
 
         if(this.board.wire === true){
@@ -362,7 +399,6 @@ export default class Cell {
 
     updateBottom(part){
         this.bottom = part;
-
     }
 
     updateTop(part){
@@ -626,11 +662,12 @@ export class Component extends Cell {
      */
     constructor(x_coordinate, y_coordinate, dimension, app, matrix, board) {
         super(x_coordinate, y_coordinate, dimension, app, matrix, board);
-        this.orientation = null;
+
         this.unit = ''
         // this.text = null;
         this.type = 'Component'
         this.drawingGraphic.on('rightdown', () => this.onRightClick())
+
     }
 
     display_orient(direction) {
@@ -656,15 +693,11 @@ export class Component extends Cell {
         this.drawingGraphic.y = this.ypixels + this.dimension / 2;
         this.drawingGraphic.pivot.x = this.drawingGraphic.x
         this.drawingGraphic.pivot.y = this.drawingGraphic.y;
-        if (this.orientation === null) {
-            this.drawingGraphic.rotation = 0;
-        } else {
+        // if (this.orientation === null) {
+        //     this.drawingGraphic.rotation = 0;
+        // } else {
             this.drawingGraphic.rotation = 3.1415/2 * this.orientation
-        }
-        // } else if ((this.orientation === 0) || (this.orientation === 8)) {
-        //     this.drawingGraphic.rotation = 5 * 3.1415 / 4
-        // } else if ((this.orientation === 2) || (this.orientation === 6)) {
-        //     this.drawingGraphic.rotation = 5 * 3.1415 * 3 / 4;
+        // }
     }
 
     onRightClick() {
@@ -802,6 +835,7 @@ export class Resistor extends Component {
 
     }
 
+
 }
 
 
@@ -820,6 +854,7 @@ export class VoltageSource extends Component {
         this.value = value;
         this.unit = 'V';
         this.abbr = 'V'
+
         // this.text = null;
     }
 
@@ -855,11 +890,12 @@ export class VoltageSource extends Component {
 
         this.drawingGraphic.lineStyle(2, 0x04b504)
         //draw plus sign
-        this.drawingGraphic.moveTo(x + this.dimension * 6 / 12, y)
-        this.drawingGraphic.lineTo(x + this.dimension * 8 / 12, y)
+
         this.drawingGraphic.moveTo(x + this.dimension * 7 / 12, y - this.dimension * 1 / 12)
         this.drawingGraphic.lineTo(x + this.dimension * 7 / 12, y + this.dimension * 1 / 12)
         //draw minus sign
+        this.drawingGraphic.moveTo(x + this.dimension * 4 / 12, y)
+        this.drawingGraphic.lineTo(x + this.dimension * 6 / 12, y)
         this.drawingGraphic.moveTo(x + this.dimension * 5 / 12, y - this.dimension * 1 / 12)
         this.drawingGraphic.lineTo(x + this.dimension * 5 / 12, y + this.dimension * 1 / 12)
 
@@ -920,15 +956,13 @@ export class CurrentSource extends Component {
         this.drawingGraphic.drawCircle(x + this.dimension / 2, y, this.dimension / (3))
 
         this.drawingGraphic.lineStyle(2, 0x04b504)
-        //draw plus sign
-        this.drawingGraphic.moveTo(x + this.dimension *  1/3, y)
-        this.drawingGraphic.lineTo(x + this.dimension * 2/3, y)
-        this.drawingGraphic.moveTo(x + this.dimension * 5/9, y + this.dimension * 1/10)
-        this.drawingGraphic.lineTo(x + this.dimension * 2/3, y);
-        this.drawingGraphic.lineTo(x + this.dimension * 5/9, y - this.dimension * 1/10)
-
+        //draw arrow
+        this.drawingGraphic.moveTo(x + this.dimension *  2/3, y)
+        this.drawingGraphic.lineTo(x + this.dimension * 1/3, y)
+        this.drawingGraphic.moveTo(x + this.dimension * 4/9, y + this.dimension * 1/10)
+        this.drawingGraphic.lineTo(x + this.dimension * 1/3, y);
+        this.drawingGraphic.lineTo(x + this.dimension * 4/9, y - this.dimension * 1/10)
 
         this.drawingGraphic.lineStyle(this.dimension/7, 0x04b504);
-
     }
 }

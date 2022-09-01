@@ -50,7 +50,7 @@ function display_voltages(voltages, node_list) {
         let nodenum = node_list[j]
 
         if (nodenum.node instanceof Component) {
-            console.log('hi')
+            // console.log('hi')
         } else {
             // console.log(nodenum instanceof Reference)
             while (parseInt(ref) !== nodenum.refnumber) {

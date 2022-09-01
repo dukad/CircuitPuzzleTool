@@ -45,6 +45,7 @@ export default class NodeVoltage {
 
         for(let i = 0; i <list.length ; i++) {
             console.log(list[i])
+            this.check_orientation(list[i])
             list[i].create_string()
             string += list[i].string + '\n'
             reference_set.add(list[i].node1)
@@ -251,9 +252,9 @@ export default class NodeVoltage {
             if (!(seen.has(direction))) {
                 let itemList = []
                 // console.log('running direction recurse initially')
-                let nextItem = this.direction_recurse(direction, seen, node)
+                let nextItem = this.direction_recurse(direction, seen, node) // go until finding another node or comp
                 let whileruns = 0
-                while ((nextItem instanceof Component) && (whileruns < 100)) {
+                while ((nextItem instanceof Component) && (whileruns < 100)) { // dont run infinitely, wires wont be that long
                     whileruns += 1
                     itemList.push(nextItem)
                     nextItem.connected_parts.forEach(connected => {
@@ -336,7 +337,22 @@ export default class NodeVoltage {
         // throw Error('Somehow didnt return any value in direction_recurse meaning that the direction checked was not a node or a component, none of its connected parts are nodes or components, and recursion doesnt find anything')
     }
 
-    display_solution(sol_string) {
-        console.log('hi')
+    check_orientation(NetItem) {
+        let comp = NetItem.component
+        console.log('checking orientation at', comp.x, comp.y)
+        if ((comp instanceof VoltageSource) || (comp instanceof CurrentSource)) {
+            console.log('its a source!')
+            let seen = new Set()
+            seen.add(comp)
+            let checkCell = comp.find_cell(comp.orientation)
+            let next = this.direction_recurse(checkCell, seen, comp)
+            console.log('after checking in direction', comp.orientation, 'at cell', checkCell.x, checkCell.y)
+            console.log('the next item found was', next.x, next.y)
+            if (next.reference === NetItem.node1) {
+                console.log('the wrong node was found, flipping...')
+                NetItem.flip_nodes()
+            }
+        }
+        return null
     }
 }
