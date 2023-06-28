@@ -9,8 +9,8 @@
     transition: opacity 0.2s ease-in, transform .5s ease-in-out;
 }
 .menuHitBox {
-    width: 35px;
-    height: 27px;
+    width: 70px;
+    height: 70px;
     background-color: rgba(5, 5, 5, 0.21);
     opacity: 0;
     margin: 6px 0;
@@ -68,6 +68,7 @@
     position: absolute;
     left: 0;
     opacity: 60%;
+    color: green;
 }
 .questionBarOut {
     width:15%;
@@ -80,5 +81,11 @@
     width: 27px;
     border: 1px solid black;
     border-radius: 50px;
-    background-color: lightslategray;
+    background-color: transparent;
+}
+.test{
+    left: 10px;
+    height: 100px;
+    width: 100px;
+    color: aqua;
 }

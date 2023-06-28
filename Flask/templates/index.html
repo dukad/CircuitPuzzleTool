@@ -20,10 +20,10 @@
     <button class="menuHitBox" onclick="openMenu()"></button>
     <div id="menu" class="menu">
         <a href="javascript:" class="closebtn" onclick="closeMenu()">&times;</a>
-        <a href="about.html?_ijt=557d2jsskrcvdrqefm7dc56esd&_ij_reload=RELOAD_ON_SAVE">About</a>
-        <a href="#">Rules</a>
-        <a href="#">Levels</a>
-        <a href="#">Help</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a class = "test" href="#">Rules</a>
+        <a class = "test" href="#">Levels</a>
+        <a class = "test" href="#">Help</a>
     </div>
 
     <div id="questionBar" class="questionBar"></div>

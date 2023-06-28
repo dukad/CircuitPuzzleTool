@@ -17,6 +17,10 @@ def opa():
 def level1():
     return render_template('/level1.html')
 
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('/about.html')
+
 if __name__ == '__main__' :
     app.run(debug=True)
 
